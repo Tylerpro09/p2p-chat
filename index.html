@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Trystero P2P Chat</title>
+
+  <style>
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      margin:0;
+      font-family:Arial,sans-serif;
+      background:#0b1020;
+      color:white;
+    }
+
+    .app{
+      max-width:900px;
+      margin:auto;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      padding:15px;
+    }
+
+    .panel{
+      background:#151d32;
+      border:1px solid #2d3c60;
+      border-radius:15px;
+      padding:15px;
+      margin-bottom:15px;
+    }
+
+    h1{
+      margin-top:0;
+    }
+
+    input,button{
+      width:100%;
+      padding:12px;
+      margin-top:8px;
+      border-radius:10px;
+      border:1px solid #34466d;
+      font-size:16px;
+    }
+
+    input{
+      background:#0d1528;
+      color:white;
+    }
+
+    button{
+      background:#5b9cff;
+      color:#07101e;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    button:disabled{
+      opacity:.5;
+    }
+
+    #messages{
+      height:50vh;
+      overflow-y:auto;
+      background:#0d1528;
+      border-radius:12px;
+      padding:12px;
+      margin-bottom:10px;
+    }
+
+    .message{
+      background:#1b2947;
+      padding:10px;
+      margin:8px 0;
+      border-radius:10px;
+    }
+
+    .mine{
+      background:#164b7a;
+    }
+
+    .system{
+      color:#9fb0cf;
+      text-align:center;
+      font-size:13px;
+      margin:10px;
+    }
+
+    .peer{
+      font-size:13px;
+      padding:5px;
+      color:#a8c4ff;
+    }
+
+    .online{
+      color:#55df8c;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns:1fr 100px;
+      gap:8px;
+    }
+
+    @media(max-width:600px){
+      .row{
+        grid-template-columns:1fr 85px;
+      }
+
+      #messages{
+        height:55vh;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="panel">
+
+    <h1>⚡ P2P Chat</h1>
+
+    <div id="status">
+      Estado: desconectado
+    </div>
+
+    <input
+      id="username"
+      placeholder="Tu nombre"
+    >
+
+    <input
+      id="room"
+      placeholder="Nombre de sala"
+    >
+
+    <button id="join">
+      Entrar
+    </button>
+
+    <button id="random">
+      Crear sala aleatoria
+    </button>
+
+    <button id="leave" disabled>
+      Salir
+    </button>
+
+    <h3>Peers conectados</h3>
+
+    <div id="peers">
+      Ninguno
+    </div>
+
+  </div>
+
+
+  <div class="panel">
+
+    <div id="messages">
+      <div class="system">
+        Entra a una sala para comenzar.
+      </div>
+    </div>
+
+    <div class="row">
+
+      <input
+        id="message"
+        placeholder="Escribe mensaje..."
+        disabled
+      >
+
+      <button
+        id="send"
+        disabled
+      >
+        Enviar
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script type="module">
+
+import {
+  joinRoom,
+  selfId
+}
+from "https://esm.run/trystero";
+
+
+const usernameInput =
+document.getElementById("username");
+
+const roomInput =
+document.getElementById("room");
+
+const joinButton =
+document.getElementById("join");
+
+const leaveButton =
+document.getElementById("leave");
+
+const randomButton =
+document.getElementById("random");
+
+const messageInput =
+document.getElementById("message");
+
+const sendButton =
+document.getElementById("send");
+
+const messages =
+document.getElementById("messages");
+
+const status =
+document.getElementById("status");
+
+const peersElement =
+document.getElementById("peers");
+
+
+let room = null;
+
+let sendChat = null;
+
+let sendName = null;
+
+const peers = new Map();
+
+
+usernameInput.value =
+localStorage.getItem("username")
+||
+"Usuario" + Math.floor(Math.random() * 9999);
+
+
+
+function addSystem(text){
+
+  const div =
+  document.createElement("div");
+
+  div.className =
+  "system";
+
+  div.textContent =
+  text;
+
+  messages.appendChild(div);
+
+  messages.scrollTop =
+  messages.scrollHeight;
+
+}
+
+
+
+function addMessage(
+  name,
+  text,
+  mine = false
+){
+
+  const div =
+  document.createElement("div");
+
+  div.className =
+  "message";
+
+  if(mine){
+
+    div.classList.add("mine");
+
+  }
+
+  const title =
+  document.createElement("b");
+
+  title.textContent =
+  name;
+
+  const body =
+  document.createElement("div");
+
+  body.textContent =
+  text;
+
+  div.appendChild(title);
+
+  div.appendChild(body);
+
+  messages.appendChild(div);
+
+  messages.scrollTop =
+  messages.scrollHeight;
+
+}
+
+
+
+function updatePeers(){
+
+  peersElement.innerHTML = "";
+
+  if(peers.size === 0){
+
+    peersElement.textContent =
+    "Ninguno";
+
+    return;
+
+  }
+
+  for(
+    const [id,name]
+    of peers
+  ){
+
+    const div =
+    document.createElement("div");
+
+    div.className =
+    "peer";
+
+    div.textContent =
+    "🟢 "
+    +
+    (name || id.slice(0,8));
+
+    peersElement.appendChild(div);
+
+  }
+
+}
+
+
+
+function join(){
+
+  const username =
+  usernameInput.value.trim();
+
+  const roomName =
+  roomInput.value.trim();
+
+
+  if(!username){
+
+    alert("Escribe tu nombre");
+
+    return;
+
+  }
+
+
+  if(!roomName){
+
+    alert("Escribe una sala");
+
+    return;
+
+  }
+
+
+  localStorage.setItem(
+    "username",
+    username
+  );
+
+
+  room =
+  joinRoom(
+    {
+      appId:
+      "mi-chat-trystero-p2p"
+    },
+    roomName
+  );
+
+
+  sendChat =
+  room.makeAction(
+    "chat"
+  );
+
+
+  sendName =
+  room.makeAction(
+    "username"
+  );
+
+
+
+  sendChat.onMessage =
+  (
+    data,
+    peerId
+  )=>{
+
+    let name =
+    peers.get(peerId)
+    ||
+    "Peer";
+
+    if(data.name){
+
+      name =
+      data.name;
+
+    }
+
+    addMessage(
+      name,
+      data.text
+    );
+
+  };
+
+
+
+  sendName.onMessage =
+  (
+    name,
+    peerId
+  )=>{
+
+    peers.set(
+      peerId,
+      name
+    );
+
+    updatePeers();
+
+  };
+
+
+
+  room.onPeerJoin =
+  peerId=>{
+
+    peers.set(
+      peerId,
+      peerId.slice(0,8)
+    );
+
+    updatePeers();
+
+    addSystem(
+      "Nuevo peer conectado"
+    );
+
+
+    sendName(
+      username,
+      peerId
+    );
+
+  };
+
+
+
+  room.onPeerLeave =
+  peerId=>{
+
+    peers.delete(
+      peerId
+    );
+
+    updatePeers();
+
+    addSystem(
+      "Peer desconectado"
+    );
+
+  };
+
+
+
+  status.innerHTML =
+  "Estado: <span class='online'>conectado</span>"
+  +
+  "<br>Sala: "
+  +
+  roomName
+  +
+  "<br>Tu Peer ID: "
+  +
+  selfId;
+
+
+
+  joinButton.disabled =
+  true;
+
+  leaveButton.disabled =
+  false;
+
+  messageInput.disabled =
+  false;
+
+  sendButton.disabled =
+  false;
+
+  roomInput.disabled =
+  true;
+
+
+  messages.innerHTML =
+  "";
+
+  addSystem(
+    "Conectado a sala: "
+    +
+    roomName
+  );
+
+}
+
+
+
+function sendMessage(){
+
+  if(!room){
+
+    return;
+
+  }
+
+
+  const text =
+  messageInput.value.trim();
+
+
+  if(!text){
+
+    return;
+
+  }
+
+
+  const username =
+  usernameInput.value.trim();
+
+
+  const data = {
+
+    name:
+    username,
+
+    text:
+    text,
+
+    time:
+    Date.now()
+
+  };
+
+
+  sendChat(
+    data
+  );
+
+
+  addMessage(
+    username,
+    text,
+    true
+  );
+
+
+  messageInput.value =
+  "";
+
+}
+
+
+
+function leave(){
+
+  if(room){
+
+    room.leave();
+
+  }
+
+
+  room =
+  null;
+
+  peers.clear();
+
+  updatePeers();
+
+
+  status.textContent =
+  "Estado: desconectado";
+
+
+  joinButton.disabled =
+  false;
+
+  leaveButton.disabled =
+  true;
+
+  messageInput.disabled =
+  true;
+
+  sendButton.disabled =
+  true;
+
+  roomInput.disabled =
+  false;
+
+
+  messages.innerHTML =
+  "";
+
+  addSystem(
+    "Desconectado"
+  );
+
+}
+
+
+
+joinButton.onclick =
+join;
+
+
+sendButton.onclick =
+sendMessage;
+
+
+leaveButton.onclick =
+leave;
+
+
+randomButton.onclick =
+()=>{
+
+  roomInput.value =
+  "sala-"
+  +
+  crypto
+  .getRandomValues(
+    new Uint32Array(2)
+  )
+  .join("-");
+
+};
+
+
+
+messageInput.addEventListener(
+  "keydown",
+  event=>{
+
+    if(
+      event.key === "Enter"
+    ){
+
+      sendMessage();
+
+    }
+
+  }
+);
+
+
+
+window.addEventListener(
+  "beforeunload",
+  ()=>{
+
+    if(room){
+
+      room.leave();
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>
