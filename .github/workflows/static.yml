@@ -1,0 +1,74 @@
+name: Deploy static content to Pages
+
+on:
+  push:
+    branches: ["main"]
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detectar index.html
+        run: |
+          echo "Buscando index.html..."
+
+          if [ ! -f "index.html" ]; then
+            echo "ERROR: No existe index.html en la raíz del repositorio."
+            echo "Tu estructura debe ser:"
+            echo "p2p-chat/index.html"
+            echo "p2p-chat/.github/workflows/static.yml"
+            exit 1
+          fi
+
+          echo "index.html encontrado correctamente."
+
+      - name: Detectar HTML roto común
+        run: |
+          echo "Revisando errores comunes..."
+
+          if grep -q '^" type="file"' index.html; then
+            echo "ERROR: Hay una línea rota del input file."
+            echo "Busca algo como: \" type=\"file\" accept=\"image/*,video/*\" >"
+            exit 1
+          fi
+
+          if ! grep -q '<script type="module">' index.html; then
+            echo "ADVERTENCIA: No se encontró <script type=\"module\">"
+          fi
+
+          if ! grep -q 'fileInput' index.html; then
+            echo "ADVERTENCIA: No se encontró fileInput"
+          fi
+
+          echo "Revisión básica terminada."
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
