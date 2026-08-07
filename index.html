@@ -1,483 +1,263 @@
+```html
 <!doctype html>
 <html lang="es">
-
 <head>
-
 <meta charset="utf-8">
-
-<meta
-name="viewport"
-content="width=device-width,initial-scale=1"
->
-
-<title>
-Chat Global P2P
-</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chat Global</title>
 
 <style>
-
 *{
-box-sizing:border-box;
+  box-sizing:border-box;
 }
 
 body{
-margin:0;
-background:#080d18;
-color:white;
-font-family:Arial,sans-serif;
+  margin:0;
+  background:#0b1220;
+  color:white;
+  font-family:Arial,sans-serif;
 }
 
 .app{
-max-width:900px;
-margin:auto;
-min-height:100vh;
-display:flex;
-flex-direction:column;
-background:#0b1220;
+  max-width:900px;
+  margin:auto;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  background:#101827;
 }
 
 header{
-padding:15px;
-background:#10192b;
-border-bottom:1px solid #293b5f;
+  padding:15px;
+  background:#182235;
+  border-bottom:1px solid #2c3b58;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
 
-h1{
-margin:0;
+.title{
+  font-size:20px;
+  font-weight:bold;
 }
 
-#status{
-font-size:13px;
-color:#9cafcc;
-margin-top:6px;
-word-break:break-all;
+.online{
+  font-size:13px;
+  color:#7fdc9c;
 }
 
 .login{
-display:flex;
-gap:8px;
-padding:12px;
+  display:flex;
+  gap:8px;
+  padding:12px;
+  background:#141e30;
 }
 
 input,
 button{
-
-padding:12px;
-
-border-radius:10px;
-
-border:1px solid #30466c;
-
-font-size:16px;
-
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #32435f;
+  font-size:16px;
 }
 
 input{
-
-flex:1;
-
-background:#0c1527;
-
-color:white;
-
+  flex:1;
+  background:#0f1726;
+  color:white;
+  outline:none;
 }
 
 button{
-
-background:#5999ff;
-
-font-weight:bold;
-
-cursor:pointer;
-
+  background:#4f8df7;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
 }
 
 button:disabled{
-
-opacity:.4;
-
+  opacity:.45;
 }
 
-#peers{
-
-background:#0c1527;
-
-padding:10px;
-
-font-size:13px;
-
-color:#9cafcc;
-
-}
-
-#relays{
-
-padding:8px;
-
-background:#050a12;
-
-font-family:monospace;
-
-font-size:11px;
-
-color:#7dff9f;
-
-}
-
-#debug{
-
-background:#02060d;
-
-color:#67ff8d;
-
-font-family:monospace;
-
-font-size:11px;
-
-padding:10px;
-
-max-height:140px;
-
-overflow:auto;
-
+#users{
+  padding:8px 12px;
+  background:#121b2b;
+  color:#9cafcc;
+  font-size:12px;
+  border-bottom:1px solid #263653;
 }
 
 #messages{
-
-flex:1;
-
-min-height:50vh;
-
-overflow:auto;
-
-padding:15px;
-
+  flex:1;
+  min-height:60vh;
+  overflow:auto;
+  padding:15px;
 }
 
 .message{
-
-max-width:80%;
-
-background:#17243d;
-
-border:1px solid #263d64;
-
-border-radius:12px;
-
-padding:10px;
-
-margin-bottom:10px;
-
-word-break:break-word;
-
+  max-width:80%;
+  margin:8px 0;
+  padding:10px 12px;
+  border-radius:14px;
+  background:#1a2840;
+  border:1px solid #2a3b5b;
+  word-break:break-word;
 }
 
-.mine{
-
-margin-left:auto;
-
-background:#17436e;
-
+.message.mine{
+  margin-left:auto;
+  background:#24518b;
 }
 
 .name{
-
-font-size:12px;
-
-font-weight:bold;
-
-color:#80b4ff;
-
+  color:#8ab9ff;
+  font-size:12px;
+  font-weight:bold;
+  margin-bottom:4px;
 }
 
 .time{
-
-font-size:10px;
-
-color:#8394b1;
-
-margin-left:8px;
-
+  color:#8394b1;
+  font-size:10px;
+  margin-left:7px;
+  font-weight:normal;
 }
 
 .system{
-
-text-align:center;
-
-font-size:12px;
-
-color:#8394b1;
-
-margin:10px;
-
+  text-align:center;
+  color:#7e8fa9;
+  font-size:12px;
+  margin:10px;
 }
 
 .composer{
-
-display:grid;
-
-grid-template-columns:1fr 90px;
-
-gap:8px;
-
-padding:12px;
-
-border-top:1px solid #293b5f;
-
+  display:grid;
+  grid-template-columns:1fr 90px;
+  gap:8px;
+  padding:12px;
+  background:#141e30;
+  border-top:1px solid #2c3b58;
+  position:sticky;
+  bottom:0;
 }
 
 @media(max-width:600px){
+  .login{
+    flex-direction:column;
+  }
 
-.login{
+  .message{
+    max-width:92%;
+  }
 
-flex-direction:column;
-
+  .composer{
+    grid-template-columns:1fr 80px;
+  }
 }
-
-.message{
-
-max-width:92%;
-
-}
-
-}
-
 </style>
-
 </head>
-
 
 <body>
 
-
 <div class="app">
 
-
 <header>
-
-<h1>
-🌎 Chat Global P2P
-</h1>
-
-<div id="status">
-Desconectado
-</div>
-
+  <div class="title">🌎 Chat Global</div>
+  <div id="status" class="online">Desconectado</div>
 </header>
 
-
-
 <div class="login">
+  <input
+    id="username"
+    maxlength="30"
+    placeholder="Tu nombre"
+  >
 
-<input
-id="username"
-placeholder="Tu nombre"
-maxlength="30"
->
-
-<button id="connect">
-Entrar
-</button>
-
+  <button id="connect">
+    Entrar
+  </button>
 </div>
 
-
-
-<div id="peers">
-
-👥 0 peers conectados
-
+<div id="users">
+  👥 1 usuario conectado
 </div>
-
-
-
-<div id="relays">
-
-Relays: esperando...
-
-</div>
-
-
-
-<div id="debug">
-
-Sistema iniciado...
-
-</div>
-
-
 
 <div id="messages">
-
-<div class="system">
-
-Bienvenido al chat global
-
+  <div class="system">
+    Bienvenido al chat global.
+  </div>
 </div>
-
-</div>
-
-
 
 <div class="composer">
 
-<input
-id="message"
-placeholder="Mensaje..."
-maxlength="2000"
-disabled
->
+  <input
+    id="message"
+    maxlength="2000"
+    placeholder="Escribe un mensaje..."
+    disabled
+  >
 
-<button
-id="send"
-disabled
->
-
-Enviar
-
-</button>
+  <button
+    id="send"
+    disabled
+  >
+    Enviar
+  </button>
 
 </div>
 
-
 </div>
-
 
 <script type="module">
 
-
 import {
-
-joinRoom,
-
-selfId,
-
-getRelaySockets
-
+  joinRoom
 }
-
-from
-"https://esm.run/trystero@0.25.3";
-
+from "https://esm.run/trystero@0.25.3";
 
 
 // ======================================
-// SALA GLOBAL
+// CONFIGURACIÓN INTERNA
 // ======================================
 
 const GLOBAL_ROOM =
-
 "TYLERPRO09-GLOBAL-CHAT-V4";
 
-
 const APP_ID =
-
 "tylerpro09-global-chat-v4";
 
-
-
-// ======================================
-// RELAYS NOSTR
-// ======================================
-
 const RELAYS = [
-
-"wss://relay.damus.io",
-
-"wss://relay.nostr.band",
-
-"wss://nos.lol",
-
-"wss://nostr.wine"
-
+  "wss://relay.damus.io",
+  "wss://relay.nostr.band",
+  "wss://nos.lol",
+  "wss://nostr.wine"
 ];
 
 
-
 // ======================================
-// HTML
+// ELEMENTOS
 // ======================================
 
 const username =
-
-document.getElementById(
-
-"username"
-
-);
-
+document.getElementById("username");
 
 const connectButton =
-
-document.getElementById(
-
-"connect"
-
-);
-
+document.getElementById("connect");
 
 const messageInput =
-
-document.getElementById(
-
-"message"
-
-);
-
+document.getElementById("message");
 
 const sendButton =
-
-document.getElementById(
-
-"send"
-
-);
-
+document.getElementById("send");
 
 const messages =
+document.getElementById("messages");
 
-document.getElementById(
-
-"messages"
-
-);
-
-
-const peersElement =
-
-document.getElementById(
-
-"peers"
-
-);
-
+const usersElement =
+document.getElementById("users");
 
 const statusElement =
-
-document.getElementById(
-
-"status"
-
-);
-
-
-const debugElement =
-
-document.getElementById(
-
-"debug"
-
-);
-
-
-const relayElement =
-
-document.getElementById(
-
-"relays"
-
-);
-
+document.getElementById("status");
 
 
 // ======================================
@@ -488,196 +268,10 @@ let room = null;
 
 let chat = null;
 
-let usernameAction = null;
+let nameAction = null;
 
-
-const names = new Map();
-
-
-
-// ======================================
-// DEBUG
-// ======================================
-
-function debug(text){
-
-console.log(text);
-
-
-const div =
-
-document.createElement(
-
-"div"
-
-);
-
-
-div.textContent =
-
-new Date().toLocaleTimeString()
-
-+
-
-" | "
-
-+
-
-text;
-
-
-debugElement.appendChild(
-
-div
-
-);
-
-
-debugElement.scrollTop =
-
-debugElement.scrollHeight;
-
-}
-
-
-
-// ======================================
-// RELAYS
-// ======================================
-
-function checkRelays(){
-
-try{
-
-const sockets =
-
-getRelaySockets();
-
-
-let connected = 0;
-
-
-let text = "";
-
-
-for(
-
-const [
-
-url,
-
-socket
-
-]
-
-of Object.entries(sockets)
-
-){
-
-let state =
-
-"DESCONOCIDO";
-
-
-if(
-
-socket.readyState === 0
-
-){
-
-state = "CONECTANDO";
-
-}
-
-
-if(
-
-socket.readyState === 1
-
-){
-
-state = "✅ ONLINE";
-
-connected++;
-
-}
-
-
-if(
-
-socket.readyState === 2
-
-){
-
-state = "CERRANDO";
-
-}
-
-
-if(
-
-socket.readyState === 3
-
-){
-
-state = "❌ OFFLINE";
-
-}
-
-
-text +=
-
-url
-
-+
-
-" = "
-
-+
-
-state
-
-+
-
-"<br>";
-
-}
-
-
-relayElement.innerHTML =
-
-"Relays online: "
-
-+
-
-connected
-
-+
-
-"<br>"
-
-+
-
-text;
-
-}
-
-catch(error){
-
-debug(
-
-"Error comprobando relays: "
-
-+
-
-error.message
-
-);
-
-}
-
-}
-
+const peerNames =
+new Map();
 
 
 // ======================================
@@ -685,29 +279,13 @@ error.message
 // ======================================
 
 username.value =
-
-localStorage.getItem(
-
-"p2p-name"
-
-)
-
+localStorage.getItem("chat-name")
 ||
-
 "Usuario"
-
 +
-
 Math.floor(
-
-Math.random()
-
-*
-
-9999
-
+  Math.random() * 9999
 );
-
 
 
 // ======================================
@@ -716,64 +294,39 @@ Math.random()
 
 function getTime(){
 
-return new Date()
-
-.toLocaleTimeString(
-
-[],
-
-{
-
-hour:"2-digit",
-
-minute:"2-digit"
+  return new Date()
+  .toLocaleTimeString(
+    [],
+    {
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
 
 }
-
-);
-
-}
-
 
 
 // ======================================
-// SISTEMA
+// MENSAJE DEL SISTEMA
 // ======================================
 
-function system(text){
+function systemMessage(text){
 
-const div =
+  const div =
+  document.createElement("div");
 
-document.createElement(
+  div.className =
+  "system";
 
-"div"
+  div.textContent =
+  text;
 
-);
+  messages.appendChild(div);
 
-
-div.className =
-
-"system";
-
-
-div.textContent =
-
-text;
-
-
-messages.appendChild(
-
-div
-
-);
-
-
-messages.scrollTop =
-
-messages.scrollHeight;
+  messages.scrollTop =
+  messages.scrollHeight;
 
 }
-
 
 
 // ======================================
@@ -781,222 +334,112 @@ messages.scrollHeight;
 // ======================================
 
 function showMessage(
-
-data,
-
-mine = false
-
+  data,
+  mine = false
 ){
 
-const box =
+  const box =
+  document.createElement("div");
 
-document.createElement(
+  box.className =
+  "message";
 
-"div"
-
-);
-
-
-box.className =
-
-"message";
+  if(mine){
+    box.classList.add("mine");
+  }
 
 
-if(mine){
+  const name =
+  document.createElement("div");
 
-box.classList.add(
+  name.className =
+  "name";
 
-"mine"
+  name.textContent =
+  data.username
+  ||
+  "Usuario";
 
-);
+
+  const time =
+  document.createElement("span");
+
+  time.className =
+  "time";
+
+  time.textContent =
+  data.time
+  ||
+  getTime();
+
+
+  name.appendChild(time);
+
+
+  const text =
+  document.createElement("div");
+
+  text.textContent =
+  data.text;
+
+
+  box.appendChild(name);
+
+  box.appendChild(text);
+
+  messages.appendChild(box);
+
+  messages.scrollTop =
+  messages.scrollHeight;
 
 }
-
-
-const name =
-
-document.createElement(
-
-"div"
-
-);
-
-
-name.className =
-
-"name";
-
-
-name.textContent =
-
-data.username
-
-||
-
-"Usuario";
-
-
-const time =
-
-document.createElement(
-
-"span"
-
-);
-
-
-time.className =
-
-"time";
-
-
-time.textContent =
-
-data.time
-
-||
-
-getTime();
-
-
-name.appendChild(
-
-time
-
-);
-
-
-const text =
-
-document.createElement(
-
-"div"
-
-);
-
-
-text.textContent =
-
-data.text;
-
-
-box.appendChild(
-
-name
-
-);
-
-
-box.appendChild(
-
-text
-
-);
-
-
-messages.appendChild(
-
-box
-
-);
-
-
-messages.scrollTop =
-
-messages.scrollHeight;
-
-}
-
 
 
 // ======================================
-// ACTUALIZAR PEERS
+// CONTADOR
 // ======================================
 
-function updatePeers(){
+function updateUsers(){
 
-if(!room){
-
-return;
-
-}
-
-
-const peers =
-
-room.getPeers();
+  if(!room){
+    usersElement.textContent =
+    "👥 1 usuario conectado";
+    return;
+  }
 
 
-const ids =
-
-Object.keys(
-
-peers
-
-);
+  const peers =
+  Object.keys(
+    room.getPeers()
+  );
 
 
-peersElement.textContent =
-
-"👥 "
-
-+
-
-ids.length
-
-+
-
-" peer"
-
-+
-
-(
-
-ids.length === 1
-
-?
-
-""
-
-:
-
-"s"
-
-)
-
-+
-
-" conectado"
-
-+
-
-(
-
-ids.length === 1
-
-?
-
-""
-
-:
-
-"s"
-
-);
+  const total =
+  peers.length + 1;
 
 
-debug(
-
-"Peers actuales: "
-
-+
-
-ids.join(", ")
-
-);
+  usersElement.textContent =
+  "👥 "
+  +
+  total
+  +
+  " usuario"
+  +
+  (
+    total === 1
+    ? ""
+    : "s"
+  )
+  +
+  " conectado"
+  +
+  (
+    total === 1
+    ? ""
+    : "s"
+  );
 
 }
-
 
 
 // ======================================
@@ -1005,544 +448,295 @@ ids.join(", ")
 
 function connect(){
 
-if(room){
-
-return;
-
-}
+  if(room){
+    return;
+  }
 
 
-const myName =
-
-username.value.trim();
-
-
-if(!myName){
-
-alert(
-
-"Escribe tu nombre"
-
-);
-
-return;
-
-}
+  const myName =
+  username.value.trim();
 
 
-localStorage.setItem(
+  if(!myName){
 
-"p2p-name",
+    alert(
+      "Escribe tu nombre"
+    );
 
-myName
+    return;
 
-);
-
-
-debug(
-
-"Mi peer ID: "
-
-+
-
-selfId
-
-);
+  }
 
 
-debug(
-
-"Conectando a relays..."
-
-);
-
-
-statusElement.textContent =
-
-"🟡 Conectando...";
+  localStorage.setItem(
+    "chat-name",
+    myName
+  );
 
 
-
-// ======================================
-// AQUÍ ESTÁ LA CORRECCIÓN
-// ======================================
-
-room =
-
-joinRoom(
-
-{
-
-appId:
-
-APP_ID,
+  statusElement.textContent =
+  "Conectando...";
 
 
-relayConfig:{
+  room =
+  joinRoom(
+    {
+      appId:
+      APP_ID,
 
-urls:
+      relayConfig:{
+        urls:
+        RELAYS,
 
-RELAYS,
+        warnOnRelayFailure:
+        false
+      }
+    },
 
-warnOnRelayFailure:
+    GLOBAL_ROOM
+  );
 
-true
 
-}
+  chat =
+  room.makeAction(
+    "chat"
+  );
 
-},
 
-GLOBAL_ROOM
-
-);
-
+  nameAction =
+  room.makeAction(
+    "username"
+  );
 
 
 // ======================================
-// ACCIONES
+// RECIBIR MENSAJE
 // ======================================
 
-chat =
+  chat.onMessage =
+  (
+    data,
+    {
+      peerId
+    }
+  )=>{
 
-room.makeAction(
+    showMessage(
+      {
+        username:
+        data.username
+        ||
+        peerNames.get(peerId)
+        ||
+        "Usuario",
 
-"chat"
+        text:
+        data.text,
 
-);
+        time:
+        data.time
+      }
+    );
 
-
-usernameAction =
-
-room.makeAction(
-
-"username"
-
-);
-
-
-
-// ======================================
-// RECIBIR CHAT
-// ======================================
-
-chat.onMessage =
-
-(
-
-data,
-
-{
-
-peerId
-
-}
-
-)=>{
-
-
-debug(
-
-"📥 Mensaje recibido de "
-
-+
-
-peerId
-
-);
-
-
-showMessage(
-
-{
-
-username:
-
-data.username
-
-||
-
-names.get(peerId)
-
-||
-
-"Usuario",
-
-
-text:
-
-data.text,
-
-
-time:
-
-data.time
-
-}
-
-);
-
-};
-
+  };
 
 
 // ======================================
-// RECIBIR NOMBRE
+// NOMBRE
 // ======================================
 
-usernameAction.onMessage =
+  nameAction.onMessage =
+  (
+    receivedName,
+    {
+      peerId
+    }
+  )=>{
 
-(
+    peerNames.set(
+      peerId,
+      receivedName
+    );
 
-name,
-
-{
-
-peerId
-
-}
-
-)=>{
-
-
-names.set(
-
-peerId,
-
-name
-
-);
-
-
-debug(
-
-"Nombre recibido: "
-
-+
-
-name
-
-);
-
-};
-
+  };
 
 
 // ======================================
-// PEER ENTRA
+// USUARIO ENTRA
 // ======================================
 
-room.onPeerJoin =
+  room.onPeerJoin =
+  peerId=>{
 
-peerId=>{
-
-
-debug(
-
-"🔥 PEER CONECTADO: "
-
-+
-
-peerId
-
-);
+    updateUsers();
 
 
-system(
-
-"🟢 Otro usuario se conectó"
-
-);
-
-
-updatePeers();
-
-
-usernameAction.send(
-
-myName,
-
-{
-
-target:
-
-peerId
-
-}
-
-);
+    nameAction.send(
+      myName,
+      {
+        target:
+        peerId
+      }
+    );
 
 
-chat.send(
+    systemMessage(
+      "🟢 Un usuario se conectó"
+    );
 
-{
-
-username:
-
-myName,
-
-text:
-
-"✅ P2P conectado correctamente",
-
-time:
-
-getTime()
-
-},
-
-{
-
-target:
-
-peerId
-
-}
-
-);
-
-};
-
+  };
 
 
 // ======================================
-// PEER SALE
+// USUARIO SALE
 // ======================================
 
-room.onPeerLeave =
+  room.onPeerLeave =
+  peerId=>{
 
-peerId=>{
-
-
-debug(
-
-"Peer desconectado: "
-
-+
-
-peerId
-
-);
+    const name =
+    peerNames.get(peerId)
+    ||
+    "Un usuario";
 
 
-names.delete(
-
-peerId
-
-);
+    peerNames.delete(
+      peerId
+    );
 
 
-updatePeers();
+    updateUsers();
 
 
-system(
+    systemMessage(
+      "🔴 "
+      +
+      name
+      +
+      " se desconectó"
+    );
 
-"🔴 Usuario desconectado"
-
-);
-
-};
-
+  };
 
 
 // ======================================
 // UI
 // ======================================
 
-statusElement.innerHTML =
-
-"🟢 Chat global activo"
-
-+
-
-"<br>"
-
-+
-
-selfId;
+  statusElement.textContent =
+  "● En línea";
 
 
-connectButton.disabled =
+  connectButton.disabled =
+  true;
 
-true;
+  username.disabled =
+  true;
 
+  messageInput.disabled =
+  false;
 
-username.disabled =
-
-true;
-
-
-messageInput.disabled =
-
-false;
+  sendButton.disabled =
+  false;
 
 
-sendButton.disabled =
-
-false;
+  updateUsers();
 
 
-system(
-
-"🌎 Entraste como "
-
-+
-
-myName
-
-);
+  systemMessage(
+    "Entraste como "
+    +
+    myName
+  );
 
 
-setInterval(
-
-()=>{
-
-checkRelays();
-
-updatePeers();
-
-},
-
-2000
-
-);
-
-
-checkRelays();
+  messageInput.focus();
 
 }
 
 
-
 // ======================================
-// ENVIAR
+// ENVIAR MENSAJE
 // ======================================
 
 async function sendMessage(){
 
-if(!chat){
-
-return;
-
-}
+  if(!chat){
+    return;
+  }
 
 
-const text =
-
-messageInput.value.trim();
-
-
-if(!text){
-
-return;
-
-}
+  const text =
+  messageInput.value.trim();
 
 
-const peerIds =
-
-Object.keys(
-
-room.getPeers()
-
-);
+  if(!text){
+    return;
+  }
 
 
-debug(
-
-"Enviando a "
-
-+
-
-peerIds.length
-
-+
-
-" peers"
-
-);
+  const peers =
+  Object.keys(
+    room.getPeers()
+  );
 
 
-if(
+  if(
+    peers.length === 0
+  ){
 
-peerIds.length === 0
+    systemMessage(
+      "No hay otros usuarios conectados."
+    );
 
-){
+    return;
 
-system(
-
-"⚠️ Todavía no hay otro peer conectado"
-
-);
-
-return;
-
-}
+  }
 
 
-const data = {
+  const data = {
 
-username:
+    username:
+    username.value.trim(),
 
-username.value.trim(),
+    text:
+    text,
 
-text:
+    time:
+    getTime()
 
-text,
-
-time:
-
-getTime()
-
-};
+  };
 
 
-try{
+  try{
 
-await chat.send(
-
-data
-
-);
+    await chat.send(
+      data
+    );
 
 
-showMessage(
-
-data,
-
-true
-
-);
+    showMessage(
+      data,
+      true
+    );
 
 
-messageInput.value =
+    messageInput.value =
+    "";
 
-"";
+    messageInput.focus();
 
+  }
 
-debug(
+  catch(error){
 
-"📤 Mensaje enviado"
+    systemMessage(
+      "No se pudo enviar el mensaje."
+    );
 
-);
+  }
 
 }
-
-catch(error){
-
-debug(
-
-"ERROR: "
-
-+
-
-error.message
-
-);
-
-}
-
-}
-
 
 
 // ======================================
@@ -1550,54 +744,44 @@ error.message
 // ======================================
 
 connectButton.onclick =
-
 connect;
 
 
 sendButton.onclick =
-
 sendMessage;
 
 
 messageInput.addEventListener(
+  "keydown",
+  event=>{
 
-"keydown",
+    if(
+      event.key === "Enter"
+      &&
+      !event.shiftKey
+    ){
 
-event=>{
+      event.preventDefault();
 
-if(
+      sendMessage();
 
-event.key === "Enter"
+    }
 
-){
-
-event.preventDefault();
-
-sendMessage();
-
-}
-
-}
-
+  }
 );
-
 
 
 window.addEventListener(
+  "beforeunload",
+  ()=>{
 
-"beforeunload",
+    room?.leave();
 
-()=>{
-
-room?.leave();
-
-}
-
+  }
 );
-
 
 </script>
 
 </body>
-
 </html>
+```
