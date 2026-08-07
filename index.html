@@ -3,38 +3,1599 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Chat Global</title>
+<title>Global Chat</title>
 
 <style>
-*{box-sizing:border-box}
+:root{
+  --bg:#0b1020;
+  --panel:#11182a;
+  --panel-2:#182238;
+  --panel-3:#0f1728;
+  --line:#25324c;
+  --text:#f5f7fb;
+  --muted:#95a3bc;
+  --accent:#5b8cff;
+  --accent-2:#3e6ed1;
+  --success:#4ade80;
+  --danger:#fb7185;
+  --bubble:#1b2942;
+  --bubble-me:#315fa8;
+}
 
+*{
+  box-sizing:border-box;
+}
+
+html,
 body{
   margin:0;
-  background:#0b1220;
-  color:white;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  min-height:100%;
+  background:
+    radial-gradient(circle at top,#17213a 0,#0b1020 42%);
+  color:var(--text);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+body{
+  min-height:100vh;
+}
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  -webkit-tap-highlight-color:transparent;
 }
 
 .app{
-  width:min(900px,100%);
+  width:min(940px,100%);
   min-height:100vh;
   margin:auto;
   display:flex;
   flex-direction:column;
-  background:#101827;
+  background:rgba(12,18,31,.92);
+  backdrop-filter:blur(16px);
+  border-left:1px solid rgba(255,255,255,.04);
+  border-right:1px solid rgba(255,255,255,.04);
 }
 
-header{
+/* HEADER */
+
+.header{
+  min-height:72px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:10px;
-  padding:14px 16px;
-  background:#182235;
-  border-bottom:1px solid #2c3b58;
+  gap:14px;
+  padding:14px 18px;
+  background:rgba(17,24,42,.96);
+  border-bottom:1px solid var(--line);
+  position:sticky;
+  top:0;
+  z-index:20;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+
+.brandIcon{
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  background:
+    linear-gradient(145deg,#6ea0ff,#466fd0);
+  display:grid;
+  place-items:center;
+  font-size:20px;
+  box-shadow:
+    0 10px 30px rgba(91,140,255,.24);
+}
+
+.brandText{
+  min-width:0;
 }
 
 .title{
+  font-size:17px;
+  font-weight:800;
+  letter-spacing:.1px;
+}
+
+.subtitle{
+  margin-top:2px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.headerRight{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.status{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:#121d31;
+  color:#bdc8db;
+  font-size:12px;
+  white-space:nowrap;
+}
+
+.statusDot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#64748b;
+}
+
+.status.online .statusDot{
+  background:var(--success);
+  box-shadow:0 0 14px rgba(74,222,128,.55);
+}
+
+.avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:#213154;
+  display:grid;
+  place-items:center;
+  font-weight:800;
+  color:#dce8ff;
+  border:1px solid #345081;
+  cursor:pointer;
+  user-select:none;
+}
+
+/* USER BAR */
+
+.userBar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:9px 18px;
+  background:#0f1728;
+  border-bottom:1px solid var(--line);
+  color:var(--muted);
+  font-size:12px;
+}
+
+.userBar strong{
+  color:#d7e0ef;
+}
+
+.userCount{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+/* CHAT */
+
+.messages{
+  flex:1;
+  min-height:60vh;
+  overflow-y:auto;
+  padding:18px;
+  scroll-behavior:smooth;
+}
+
+.dayLabel{
+  width:max-content;
+  margin:12px auto;
+  padding:5px 10px;
+  border-radius:999px;
+  background:#121b2c;
+  border:1px solid #202d45;
+  color:#8593aa;
+  font-size:11px;
+}
+
+.messageRow{
+  display:flex;
+  margin:8px 0;
+}
+
+.messageRow.mine{
+  justify-content:flex-end;
+}
+
+.bubble{
+  max-width:min(76%,580px);
+  background:var(--bubble);
+  border:1px solid #2a3c5c;
+  border-radius:16px 16px 16px 5px;
+  padding:10px 12px 8px;
+  box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+
+.messageRow.mine .bubble{
+  background:var(--bubble-me);
+  border-color:#4875bd;
+  border-radius:16px 16px 5px 16px;
+}
+
+.messageMeta{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:5px;
+  font-size:11px;
+}
+
+.messageName{
+  color:#9dc0ff;
+  font-weight:750;
+}
+
+.messageRow.mine .messageName{
+  color:#d9e7ff;
+}
+
+.messageTime{
+  color:#98a5b8;
+  font-size:10px;
+}
+
+.messageText{
+  font-size:15px;
+  line-height:1.42;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+.media{
+  display:block;
+  max-width:100%;
+  width:min(430px,100%);
+  margin-top:8px;
+  border-radius:13px;
+  background:#050914;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+video.media{
+  max-height:420px;
+}
+
+.fileMeta{
+  margin-top:6px;
+  color:#a8b4c9;
+  font-size:11px;
+}
+
+.systemMessage{
+  width:max-content;
+  max-width:90%;
+  margin:12px auto;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#111a2b;
+  border:1px solid #202d44;
+  color:#8290a8;
+  font-size:11px;
+  text-align:center;
+}
+
+/* ATTACH PREVIEW */
+
+.preview{
+  display:none;
+  padding:10px 14px;
+  background:#0f1728;
+  border-top:1px solid var(--line);
+}
+
+.preview.show{
+  display:block;
+}
+
+.previewCard{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:#151f33;
+  border:1px solid #2b3b58;
+  border-radius:14px;
+  padding:9px;
+}
+
+.previewMedia img,
+.previewMedia video{
+  width:62px;
+  height:62px;
+  object-fit:cover;
+  border-radius:10px;
+  background:#050914;
+}
+
+.previewInfo{
+  flex:1;
+  min-width:0;
+}
+
+.previewName{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-size:13px;
+  font-weight:650;
+}
+
+.previewSize{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:4px;
+}
+
+.removeFile{
+  width:34px;
+  height:34px;
+  border:0;
+  border-radius:50%;
+  background:#34202b;
+  color:#ffc3cd;
+  cursor:pointer;
+}
+
+/* COMPOSER */
+
+.composer{
+  display:grid;
+  grid-template-columns:44px 1fr 48px;
+  gap:9px;
+  align-items:center;
+  padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+  background:#10192b;
+  border-top:1px solid var(--line);
+  position:sticky;
+  bottom:0;
+  z-index:18;
+}
+
+.iconButton{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  border:1px solid #30415f;
+  background:#1d2a43;
+  color:#dbe7fb;
+  cursor:pointer;
+  font-size:18px;
+}
+
+.messageInput{
+  height:44px;
+  border:1px solid #30415f;
+  border-radius:999px;
+  background:#0d1626;
+  color:white;
+  padding:0 16px;
+  outline:none;
+}
+
+.messageInput:focus{
+  border-color:#5477af;
+}
+
+.sendButton{
+  width:48px;
+  height:44px;
+  border:0;
+  border-radius:50%;
+  background:linear-gradient(145deg,#6797ff,#4879df);
+  color:white;
+  font-size:19px;
+  cursor:pointer;
+  box-shadow:0 7px 20px rgba(91,140,255,.25);
+}
+
+#fileInput{
+  display:none;
+}
+
+/* REGISTER */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:
+    rgba(5,9,18,.93);
+  backdrop-filter:blur(12px);
+}
+
+.overlay.show{
+  display:flex;
+}
+
+.registerCard{
+  width:min(420px,100%);
+  padding:24px;
+  border-radius:22px;
+  background:
+    linear-gradient(180deg,#172137,#11192a);
+  border:1px solid #2d3d59;
+  box-shadow:0 28px 90px rgba(0,0,0,.45);
+}
+
+.registerLogo{
+  width:58px;
+  height:58px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  margin-bottom:18px;
+  font-size:27px;
+  background:
+    linear-gradient(145deg,#6ea0ff,#466fd0);
+  box-shadow:0 15px 40px rgba(91,140,255,.25);
+}
+
+.registerCard h2{
+  margin:0;
+  font-size:23px;
+}
+
+.registerCard p{
+  margin:8px 0 18px;
+  color:#9ba9c1;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.registerInput{
+  width:100%;
+  height:48px;
+  border:1px solid #344663;
+  border-radius:13px;
+  background:#0d1626;
+  color:white;
+  padding:0 14px;
+  outline:none;
+}
+
+.registerInput:focus{
+  border-color:#6588c2;
+}
+
+.registerButton{
+  width:100%;
+  height:48px;
+  margin-top:12px;
+  border:0;
+  border-radius:13px;
+  background:
+    linear-gradient(145deg,#6797ff,#4879df);
+  color:white;
+  font-weight:800;
+  cursor:pointer;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:600px){
+
+  .app{
+    border:0;
+  }
+
+  .header{
+    padding:12px 14px;
+  }
+
+  .brandIcon{
+    width:39px;
+    height:39px;
+  }
+
+  .status{
+    padding:6px 8px;
+  }
+
+  .bubble{
+    max-width:88%;
+  }
+
+  .messages{
+    padding:14px 10px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="registerOverlay" class="overlay">
+  <div class="registerCard">
+
+    <div class="registerLogo">
+      💬
+    </div>
+
+    <h2>Elige tu nombre</h2>
+
+    <p>
+      Solo tendrás que hacerlo una vez en este dispositivo.
+      Después entrarás automáticamente al chat.
+    </p>
+
+    <input
+      id="registerName"
+      class="registerInput"
+      maxlength="30"
+      autocomplete="off"
+      placeholder="Ej. Tyler"
+    >
+
+    <button
+      id="registerButton"
+      class="registerButton"
+    >
+      Continuar
+    </button>
+
+  </div>
+</div>
+
+
+<div class="app">
+
+<header class="header">
+
+  <div class="brand">
+
+    <div class="brandIcon">
+      💬
+    </div>
+
+    <div class="brandText">
+      <div class="title">Global Chat</div>
+      <div class="subtitle">
+        Conversación global
+      </div>
+    </div>
+
+  </div>
+
+  <div class="headerRight">
+
+    <div
+      id="status"
+      class="status online"
+    >
+      <span class="statusDot"></span>
+      <span id="statusText">En línea</span>
+    </div>
+
+    <div
+      id="avatar"
+      class="avatar"
+      title="Cambiar nombre"
+    >
+      U
+    </div>
+
+  </div>
+
+</header>
+
+
+<div class="userBar">
+
+  <div>
+    Conectado como
+    <strong id="currentUser">Usuario</strong>
+  </div>
+
+  <div
+    id="users"
+    class="userCount"
+  >
+    👥 1 usuario
+  </div>
+
+</div>
+
+
+<main
+  id="messages"
+  class="messages"
+>
+</main>
+
+
+<div
+  id="preview"
+  class="preview"
+>
+
+  <div class="previewCard">
+
+    <div
+      id="previewMedia"
+      class="previewMedia"
+    ></div>
+
+    <div class="previewInfo">
+
+      <div
+        id="previewName"
+        class="previewName"
+      ></div>
+
+      <div
+        id="previewSize"
+        class="previewSize"
+      ></div>
+
+    </div>
+
+    <button
+      id="cancelFile"
+      class="removeFile"
+    >
+      ✕
+    </button>
+
+  </div>
+
+</div>
+
+
+<div class="composer">
+
+  <button
+    id="attach"
+    class="iconButton"
+    title="Adjuntar archivo"
+  >
+    ＋
+  </button>
+
+  <input
+    id="message"
+    class="messageInput"
+    maxlength="2000"
+    placeholder="Escribe un mensaje..."
+  >
+
+  <button
+    id="send"
+    class="sendButton"
+    title="Enviar"
+  >
+    ➤
+  </button>
+
+</div>
+
+
+<input
+  id="fileInput"
+  type="file"
+  accept="image/*,video/*"
+>
+
+</div>
+
+
+<script type="module">
+
+import {
+  joinRoom
+}
+from "https://esm.run/trystero@0.25.3";
+
+
+// =====================================================
+// CONFIG
+// =====================================================
+
+const GLOBAL_ROOM =
+"TYLERPRO09-GLOBAL-CHAT-PRO-V1";
+
+const APP_ID =
+"tylerpro09-global-chat-pro-v1";
+
+const NAME_KEY =
+"global-chat-user";
+
+const MAX_MESSAGES =
+200;
+
+const MAX_IMAGE =
+10 * 1024 * 1024;
+
+const MAX_VIDEO =
+50 * 1024 * 1024;
+
+const RELAYS = [
+  "wss://relay.damus.io",
+  "wss://relay.nostr.band",
+  "wss://nos.lol",
+  "wss://nostr.wine"
+];
+
+
+// =====================================================
+// ELEMENTS
+// =====================================================
+
+const registerOverlay =
+document.getElementById(
+  "registerOverlay"
+);
+
+const registerName =
+document.getElementById(
+  "registerName"
+);
+
+const registerButton =
+document.getElementById(
+  "registerButton"
+);
+
+const avatar =
+document.getElementById(
+  "avatar"
+);
+
+const currentUser =
+document.getElementById(
+  "currentUser"
+);
+
+const statusElement =
+document.getElementById(
+  "status"
+);
+
+const statusText =
+document.getElementById(
+  "statusText"
+);
+
+const usersElement =
+document.getElementById(
+  "users"
+);
+
+const messagesElement =
+document.getElementById(
+  "messages"
+);
+
+const messageInput =
+document.getElementById(
+  "message"
+);
+
+const sendButton =
+document.getElementById(
+  "send"
+);
+
+const attachButton =
+document.getElementById(
+  "attach"
+);
+
+const fileInput =
+document.getElementById(
+  "fileInput"
+);
+
+const preview =
+document.getElementById(
+  "preview"
+);
+
+const previewMedia =
+document.getElementById(
+  "previewMedia"
+);
+
+const previewName =
+document.getElementById(
+  "previewName"
+);
+
+const previewSize =
+document.getElementById(
+  "previewSize"
+);
+
+const cancelFile =
+document.getElementById(
+  "cancelFile"
+);
+
+
+// =====================================================
+// STATE
+// =====================================================
+
+let myName =
+localStorage.getItem(
+  NAME_KEY
+);
+
+let room = null;
+
+let chatAction = null;
+
+let nameAction = null;
+
+let historyAction = null;
+
+let fileAction = null;
+
+let selectedFile = null;
+
+const peerNames =
+new Map();
+
+const knownMessageIds =
+new Set();
+
+
+// =====================================================
+// HELPERS
+// =====================================================
+
+function makeId(){
+
+  return crypto.randomUUID
+    ? crypto.randomUUID()
+    : (
+        Date.now()
+        +
+        "-"
+        +
+        Math.random()
+        .toString(36)
+        .slice(2)
+      );
+
+}
+
+
+function now(){
+
+  return Date.now();
+
+}
+
+
+function formatTime(timestamp){
+
+  return new Date(
+    timestamp
+  ).toLocaleTimeString(
+    [],
+    {
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+
+}
+
+
+function formatSize(bytes){
+
+  if(bytes < 1024){
+
+    return bytes + " B";
+
+  }
+
+  if(bytes < 1024 * 1024){
+
+    return (
+      bytes / 1024
+    ).toFixed(1)
+    + " KB";
+
+  }
+
+  return (
+    bytes / 1024 / 1024
+  ).toFixed(1)
+  + " MB";
+
+}
+
+
+function setUserInterface(){
+
+  const name =
+  myName || "Usuario";
+
+  currentUser.textContent =
+  name;
+
+  avatar.textContent =
+  name
+  .charAt(0)
+  .toUpperCase();
+
+}
+
+
+function setOnline(){
+
+  statusElement.classList.add(
+    "online"
+  );
+
+  statusText.textContent =
+  "En línea";
+
+}
+
+
+function scrollBottom(){
+
+  requestAnimationFrame(
+    ()=>{
+
+      messagesElement.scrollTop =
+      messagesElement.scrollHeight;
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// INDEXED DB
+// =====================================================
+
+const DB_NAME =
+"global-chat-professional";
+
+const DB_VERSION =
+1;
+
+const STORE =
+"messages";
+
+
+function openDB(){
+
+  return new Promise(
+    (resolve,reject)=>{
+
+      const request =
+      indexedDB.open(
+        DB_NAME,
+        DB_VERSION
+      );
+
+
+      request.onupgradeneeded =
+      ()=>{
+
+        const db =
+        request.result;
+
+
+        if(
+          !db.objectStoreNames.contains(
+            STORE
+          )
+        ){
+
+          const store =
+          db.createObjectStore(
+            STORE,
+            {
+              keyPath:"id"
+            }
+          );
+
+
+          store.createIndex(
+            "timestamp",
+            "timestamp"
+          );
+
+        }
+
+      };
+
+
+      request.onsuccess =
+      ()=>resolve(
+        request.result
+      );
+
+
+      request.onerror =
+      ()=>reject(
+        request.error
+      );
+
+    }
+  );
+
+}
+
+
+async function getAllRecords(){
+
+  const db =
+  await openDB();
+
+
+  const records =
+  await new Promise(
+    (resolve,reject)=>{
+
+      const tx =
+      db.transaction(
+        STORE,
+        "readonly"
+      );
+
+
+      const request =
+      tx
+      .objectStore(
+        STORE
+      )
+      .getAll();
+
+
+      request.onsuccess =
+      ()=>resolve(
+        request.result
+      );
+
+
+      request.onerror =
+      ()=>reject(
+        request.error
+      );
+
+    }
+  );
+
+
+  db.close();
+
+
+  records.sort(
+    (a,b)=>
+      a.timestamp
+      -
+      b.timestamp
+  );
+
+
+  return records;
+
+}
+
+
+async function getHistory(){
+
+  const records =
+  await getAllRecords();
+
+
+  return records.slice(
+    -MAX_MESSAGES
+  );
+
+}
+
+
+async function saveRecord(record){
+
+  const db =
+  await openDB();
+
+
+  await new Promise(
+    (resolve,reject)=>{
+
+      const tx =
+      db.transaction(
+        STORE,
+        "readwrite"
+      );
+
+
+      tx.objectStore(
+        STORE
+      ).put(
+        record
+      );
+
+
+      tx.oncomplete =
+      resolve;
+
+
+      tx.onerror =
+      ()=>reject(
+        tx.error
+      );
+
+    }
+  );
+
+
+  db.close();
+
+
+  await trimMessages();
+
+}
+
+
+async function trimMessages(){
+
+  const records =
+  await getAllRecords();
+
+
+  if(
+    records.length <= MAX_MESSAGES
+  ){
+
+    return;
+
+  }
+
+
+  const old =
+  records.slice(
+    0,
+    records.length - MAX_MESSAGES
+  );
+
+
+  const db =
+  await openDB();
+
+
+  await new Promise(
+    (resolve,reject)=>{
+
+      const tx =
+      db.transaction(
+        STORE,
+        "readwrite"
+      );
+
+
+      const store =
+      tx.objectStore(
+        STORE
+      );
+
+
+      old.forEach(
+        record=>
+          store.delete(
+            record.id
+          )
+      );
+
+
+      tx.oncomplete =
+      resolve;
+
+
+      tx.onerror =
+      ()=>reject(
+        tx.error
+      );
+
+    }
+  );
+
+
+  db.close();
+
+}
+
+
+// =====================================================
+// RENDER
+// =====================================================
+
+function renderMessage(
+  record,
+  mine = false
+){
+
+  if(
+    document.querySelector(
+      `[data-message-id="${record.id}"]`
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const row =
+  document.createElement(
+    "div"
+  );
+
+
+  row.className =
+  "messageRow";
+
+
+  if(mine){
+
+    row.classList.add(
+      "mine"
+    );
+
+  }
+
+
+  row.dataset.messageId =
+  record.id;
+
+
+  const bubble =
+  document.createElement(
+    "div"
+  );
+
+
+  bubble.className =
+  "bubble";
+
+
+  const meta =
+  document.createElement(
+    "div"
+  );
+
+
+  meta.className =
+  "messageMeta";
+
+
+  const name =
+  document.createElement(
+    "span"
+  );
+
+
+  name.className =
+  "messageName";
+
+
+  name.textContent =
+  record.username
+  ||
+  "Usuario";
+
+
+  const time =
+  document.createElement(
+    "span"
+  );
+
+
+  time.className =
+  "messageTime";
+
+
+  time.textContent =
+  formatTime(
+    record.timestamp
+  );
+
+
+  meta.append(
+    name,
+    time
+  );
+
+
+  bubble.appendChild(
+    meta
+  );
+
+
+  if(
+    record.type === "text"
+  ){
+
+    const body =
+    document.createElement(
+      "div"
+    );
+
+
+    body.className =
+    "messageText";
+
+
+    body.textContent =
+    record.text
+    ||
+    "";
+
+
+    bubble.appendChild(
+      body
+    );
+
+  }
+
+
+  if(
+    record.type === "image"
+  ){
+
+    if(record.blob){
+
+      const img =
+      document.createElement(
+        "img"
+      );
+
+
+      img.className =
+      "media";
+
+
+      img.loading =
+      "lazy";
+
+
+      img.src =
+      URL.createObjectURL(
+        record.blob
+      );
+
+
+      bubble.appendChild(
+        img
+      );
+
+    }
+
+
+    const metaFile =
+    document.createElement(
+      "div"
+    );
+
+
+    metaFile.className =
+    "fileMeta";
+
+
+    metaFile.textContent =
+    record.filename
+    ||
+    "Imagen";
+
+
+    bubble.appendChild(
+      metaFile
+    );
+
+  }
+
+
+  if(
+    record.type === "video"
+  ){
+
+    if(record.blob){
+
+      const video =
+      document.createElement(
+        "video"
+      );
+
+
+      video.className =
+      "media";
+
+
+      video.controls =
+      true;
+
+
+      video.preload =
+      "metadata";
+
+
+      video.src =
+      URL.createObjectURL(
+        record.blob
+      );
+
+
+      bubble.appendChild(
+        video
+      );
+
+    }
+
+
+    const metaFile =
+    document.createElement(
+      "div"
+    );
+
+
+    metaFile.className =
+    "fileMeta";
+
+
+    metaFile.textContent =
+    record.filename
+    ||
+    "Video";
+
+
+    bubble.appendChild(
+      metaFile
+    );
+
+  }
+
+
+  row.appendChild(
+    bubble
+  );
+
+
+  messagesElement.appendChild(
+    row
+  );
+
+
+  scrollBottom();
+
+}
+
+
+async function addRecord(
+  record,
+  mine = false
+){
+
+  if(
+    knownMessageIds.has(
+      record.id
+    )
+  ){
+
+    return;
+
+  }
+
+
+  knownMessageIds.add(
+    record.id
+  );
+
+
+  await saveRecord(
+    record
+  );
+
+
+  renderMessage(
+    record,
+    mine
+  );
+
+}
+
+
+async function loadHistory(){
+
+  messagesElement.innerHTML =
+  "";
+
+
+  const history =
+  await getHistory();
+
+
+  for(
+    const record
+    of history
+  ){
+
+    knownMessageIds.add(
+      record.id
+    );
+
+
+    renderMessage(
+      record,
+      record.username === myName
+    );
+
+  }
+
+
+  if(
+    history.length === 0
+  ){
+
+    const empty =
+    document.createElement(
+      "div"
+    );
+
+
+    empty.className =
+    "systemMessage";
+
+
+    empty.textContent =
+    "No hay mensajes todavía";
+
+
+    messagesElement.appendChild(
+      empty
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// USERS
+// =====================================================
+
+function updateUsers(){
+
+  let total =
+  1;
+
+
+  if(room){
+
+    total +=
+    Object.ke.title{
   font-size:20px;
   font-weight:800;
 }
