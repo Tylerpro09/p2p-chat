@@ -6,9 +6,7 @@
 <title>Chat Global</title>
 
 <style>
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
   margin:0;
@@ -28,13 +26,1583 @@ body{
 
 header{
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
   gap:10px;
   padding:14px 16px;
   background:#182235;
   border-bottom:1px solid #2c3b58;
 }
+
+.title{
+  font-size:20px;
+  font-weight:800;
+}
+
+#status{
+  font-size:12px;
+  color:#7fdc9c;
+}
+
+#users{
+  padding:8px 12px;
+  background:#121b2b;
+  color:#9cafcc;
+  font-size:12px;
+  border-bottom:1px solid #263653;
+}
+
+#messages{
+  flex:1;
+  min-height:65vh;
+  overflow-y:auto;
+  padding:15px;
+}
+
+.message{
+  max-width:80%;
+  margin:8px 0;
+  padding:10px 12px;
+  border-radius:15px;
+  background:#1a2840;
+  border:1px solid #2a3b5b;
+  word-break:break-word;
+}
+
+.message.mine{
+  margin-left:auto;
+  background:#24518b;
+}
+
+.name{
+  color:#8ab9ff;
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:5px;
+}
+
+.time{
+  margin-left:7px;
+  color:#93a2ba;
+  font-size:10px;
+  font-weight:400;
+}
+
+.media{
+  display:block;
+  width:100%;
+  max-width:420px;
+  margin-top:8px;
+  border-radius:12px;
+  background:#080d18;
+}
+
+video.media{
+  max-height:360px;
+}
+
+.system{
+  text-align:center;
+  color:#7e8fa9;
+  font-size:12px;
+  margin:10px;
+}
+
+.composer{
+  display:grid;
+  grid-template-columns:46px 1fr 82px;
+  gap:8px;
+  align-items:center;
+  padding:12px;
+  background:#141e30;
+  border-top:1px solid #2c3b58;
+  position:sticky;
+  bottom:0;
+}
+
+input,button{
+  border-radius:12px;
+  border:1px solid #32435f;
+  padding:12px;
+  font:inherit;
+}
+
+input{
+  background:#0f1726;
+  color:white;
+  outline:none;
+}
+
+button{
+  background:#4f8df7;
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.attach{
+  background:#25334d;
+}
+
+#fileInput{
+  display:none;
+}
+
+.preview{
+  display:none;
+  padding:10px 12px;
+  background:#111a2b;
+  border-top:1px solid #263653;
+}
+
+.preview.show{
+  display:block;
+}
+
+.previewContent{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.preview img,
+.preview video{
+  width:70px;
+  height:70px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.previewInfo{
+  flex:1;
+  min-width:0;
+}
+
+.previewName{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:13px;
+}
+
+.previewSize{
+  color:#8ea0bf;
+  font-size:11px;
+  margin-top:4px;
+}
+
+.cancel{
+  background:#3f2730;
+  color:#ffc7c7;
+}
+
+/* Registro inicial */
+
+.registerOverlay{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:rgba(5,10,20,.96);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.registerOverlay.show{
+  display:flex;
+}
+
+.registerCard{
+  width:min(420px,100%);
+  background:#151f32;
+  border:1px solid #314363;
+  border-radius:18px;
+  padding:22px;
+  box-shadow:0 25px 70px rgba(0,0,0,.45);
+}
+
+.registerCard h2{
+  margin-top:0;
+}
+
+.registerCard p{
+  color:#9cafcc;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.registerCard input{
+  width:100%;
+  margin:10px 0;
+}
+
+.registerCard button{
+  width:100%;
+}
+
+.userMenu{
+  padding:8px 12px;
+  background:#121b2b;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  border-bottom:1px solid #263653;
+  font-size:12px;
+  color:#9cafcc;
+}
+
+.userMenu button{
+  width:auto;
+  padding:7px 10px;
+  font-size:12px;
+  background:#25334d;
+}
+
+@media(max-width:600px){
+  .message{
+    max-width:92%;
+  }
+
+  .composer{
+    grid-template-columns:46px 1fr 72px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="registerOverlay" class="registerOverlay">
+  <div class="registerCard">
+    <h2>👋 Bienvenido</h2>
+
+    <p>
+      Registra tu nombre una sola vez.
+      Se guardará en este dispositivo y entrarás automáticamente la próxima vez.
+    </p>
+
+    <input
+      id="registerName"
+      maxlength="30"
+      placeholder="Tu nombre"
+      autocomplete="off"
+    >
+
+    <button id="registerButton">
+      Entrar al chat
+    </button>
+  </div>
+</div>
+
+<div class="app">
+
+<header>
+  <div class="title">🌎 Chat Global</div>
+  <div id="status">Conectando...</div>
+</header>
+
+<div class="userMenu">
+  <span id="currentUser">Usuario</span>
+
+  <button id="changeName">
+    Cambiar nombre
+  </button>
+</div>
+
+<div id="users">
+  👥 1 usuario
+</div>
+
+<div id="messages">
+  <div class="system">
+    Cargando historial...
+  </div>
+</div>
+
+<div id="preview" class="preview">
+
+  <div class="previewContent">
+
+    <div id="previewMedia"></div>
+
+    <div class="previewInfo">
+      <div id="previewName" class="previewName"></div>
+      <div id="previewSize" class="previewSize"></div>
+    </div>
+
+    <button id="cancelFile" class="cancel">
+      ✕
+    </button>
+
+  </div>
+
+</div>
+
+<div class="composer">
+
+  <button
+    id="attach"
+    class="attach"
+  >
+    📎
+  </button>
+
+  <input
+    id="message"
+    maxlength="2000"
+    placeholder="Escribe un mensaje..."
+  >
+
+  <button id="send">
+    Enviar
+  </button>
+
+</div>
+
+<input
+  id="fileInput"
+  type="file"
+  accept="image/*,video/*"
+>
+
+</div>
+
+<script type="module">
+
+import {
+  joinRoom
+}
+from "https://esm.run/trystero@0.25.3";
+
+
+// ======================================================
+// CONFIGURACIÓN
+// ======================================================
+
+const GLOBAL_ROOM =
+"TYLERPRO09-GLOBAL-CHAT-V7";
+
+const APP_ID =
+"tylerpro09-global-chat-v7";
+
+const NAME_KEY =
+"global-chat-username";
+
+const MAX_MESSAGES =
+200;
+
+const MAX_IMAGE =
+10 * 1024 * 1024;
+
+const MAX_VIDEO =
+50 * 1024 * 1024;
+
+const RELAYS = [
+  "wss://relay.damus.io",
+  "wss://relay.nostr.band",
+  "wss://nos.lol",
+  "wss://nostr.wine"
+];
+
+
+// ======================================================
+// ELEMENTOS
+// ======================================================
+
+const registerOverlay =
+document.getElementById("registerOverlay");
+
+const registerName =
+document.getElementById("registerName");
+
+const registerButton =
+document.getElementById("registerButton");
+
+const changeNameButton =
+document.getElementById("changeName");
+
+const currentUser =
+document.getElementById("currentUser");
+
+const statusElement =
+document.getElementById("status");
+
+const usersElement =
+document.getElementById("users");
+
+const messagesElement =
+document.getElementById("messages");
+
+const messageInput =
+document.getElementById("message");
+
+const sendButton =
+document.getElementById("send");
+
+const attachButton =
+document.getElementById("attach");
+
+const fileInput =
+document.getElementById("fileInput");
+
+const preview =
+document.getElementById("preview");
+
+const previewMedia =
+document.getElementById("previewMedia");
+
+const previewName =
+document.getElementById("previewName");
+
+const previewSize =
+document.getElementById("previewSize");
+
+const cancelFile =
+document.getElementById("cancelFile");
+
+
+// ======================================================
+// ESTADO
+// ======================================================
+
+let myName =
+localStorage.getItem(NAME_KEY);
+
+let room = null;
+
+let chatAction = null;
+
+let nameAction = null;
+
+let historyAction = null;
+
+let fileAction = null;
+
+let selectedFile = null;
+
+const peerNames =
+new Map();
+
+const knownMessageIds =
+new Set();
+
+
+// ======================================================
+// HELPERS
+// ======================================================
+
+function makeId(){
+
+  if(crypto.randomUUID){
+    return crypto.randomUUID();
+  }
+
+  return (
+    Date.now()
+    +
+    "-"
+    +
+    Math.random()
+    .toString(36)
+    .slice(2)
+  );
+
+}
+
+
+function now(){
+
+  return Date.now();
+
+}
+
+
+function formatTime(timestamp){
+
+  return new Date(timestamp)
+  .toLocaleTimeString(
+    [],
+    {
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+
+}
+
+
+function formatSize(bytes){
+
+  if(bytes < 1024){
+    return bytes + " B";
+  }
+
+  if(bytes < 1024 * 1024){
+    return (
+      bytes / 1024
+    ).toFixed(1)
+    + " KB";
+  }
+
+  return (
+    bytes / 1024 / 1024
+  ).toFixed(1)
+  + " MB";
+
+}
+
+
+// ======================================================
+// INDEXEDDB
+// ======================================================
+
+const DB_NAME =
+"global-p2p-chat-v7";
+
+const DB_VERSION =
+1;
+
+const STORE =
+"messages";
+
+
+function openDB(){
+
+  return new Promise(
+    (resolve,reject)=>{
+
+      const request =
+      indexedDB.open(
+        DB_NAME,
+        DB_VERSION
+      );
+
+
+      request.onupgradeneeded =
+      ()=>{
+
+        const db =
+        request.result;
+
+        if(
+          !db.objectStoreNames.contains(
+            STORE
+          )
+        ){
+
+          const store =
+          db.createObjectStore(
+            STORE,
+            {
+              keyPath:"id"
+            }
+          );
+
+          store.createIndex(
+            "timestamp",
+            "timestamp"
+          );
+
+        }
+
+      };
+
+
+      request.onsuccess =
+      ()=>resolve(
+        request.result
+      );
+
+
+      request.onerror =
+      ()=>reject(
+        request.error
+      );
+
+    }
+  );
+
+}
+
+
+async function saveRecord(record){
+
+  const db =
+  await openDB();
+
+
+  await new Promise(
+    (resolve,reject)=>{
+
+      const tx =
+      db.transaction(
+        STORE,
+        "readwrite"
+      );
+
+      tx.objectStore(
+        STORE
+      ).put(
+        record
+      );
+
+      tx.oncomplete =
+      resolve;
+
+      tx.onerror =
+      ()=>reject(
+        tx.error
+      );
+
+    }
+  );
+
+
+  db.close();
+
+  await trimDatabase();
+
+}
+
+
+async function getAllRecords(){
+
+  const db =
+  await openDB();
+
+
+  const records =
+  await new Promise(
+    (resolve,reject)=>{
+
+      const tx =
+      db.transaction(
+        STORE,
+        "readonly"
+      );
+
+      const request =
+      tx.objectStore(
+        STORE
+      ).getAll();
+
+
+      request.onsuccess =
+      ()=>resolve(
+        request.result
+      );
+
+
+      request.onerror =
+      ()=>reject(
+        request.error
+      );
+
+    }
+  );
+
+
+  db.close();
+
+
+  records.sort(
+    (a,b)=>
+      a.timestamp
+      -
+      b.timestamp
+  );
+
+
+  return records;
+
+}
+
+
+async function getHistory(){
+
+  const records =
+  await getAllRecords();
+
+  return records.slice(
+    -MAX_MESSAGES
+  );
+
+}
+
+
+async function trimDatabase(){
+
+  const records =
+  await getAllRecords();
+
+
+  if(
+    records.length <= MAX_MESSAGES
+  ){
+    return;
+  }
+
+
+  const excess =
+  records.slice(
+    0,
+    records.length - MAX_MESSAGES
+  );
+
+
+  const db =
+  await openDB();
+
+
+  await new Promise(
+    (resolve,reject)=>{
+
+      const tx =
+      db.transaction(
+        STORE,
+        "readwrite"
+      );
+
+      const store =
+      tx.objectStore(
+        STORE
+      );
+
+
+      for(
+        const record
+        of excess
+      ){
+
+        store.delete(
+          record.id
+        );
+
+      }
+
+
+      tx.oncomplete =
+      resolve;
+
+      tx.onerror =
+      ()=>reject(
+        tx.error
+      );
+
+    }
+  );
+
+
+  db.close();
+
+}
+
+
+// ======================================================
+// MENSAJES
+// ======================================================
+
+function systemMessage(text){
+
+  const div =
+  document.createElement("div");
+
+  div.className =
+  "system";
+
+  div.textContent =
+  text;
+
+  messagesElement.appendChild(
+    div
+  );
+
+  messagesElement.scrollTop =
+  messagesElement.scrollHeight;
+
+}
+
+
+function renderRecord(
+  record,
+  mine = false
+){
+
+  if(
+    document.querySelector(
+      `[data-message-id="${record.id}"]`
+    )
+  ){
+    return;
+  }
+
+
+  const box =
+  document.createElement("div");
+
+  box.className =
+  "message";
+
+  box.dataset.messageId =
+  record.id;
+
+
+  if(mine){
+    box.classList.add(
+      "mine"
+    );
+  }
+
+
+  const name =
+  document.createElement("div");
+
+  name.className =
+  "name";
+
+  name.textContent =
+  record.username
+  ||
+  "Usuario";
+
+
+  const time =
+  document.createElement("span");
+
+  time.className =
+  "time";
+
+  time.textContent =
+  formatTime(
+    record.timestamp
+  );
+
+
+  name.appendChild(
+    time
+  );
+
+  box.appendChild(
+    name
+  );
+
+
+  if(
+    record.type === "text"
+  ){
+
+    const body =
+    document.createElement("div");
+
+    body.textContent =
+    record.text;
+
+    box.appendChild(
+      body
+    );
+
+  }
+
+
+  if(
+    record.type === "image"
+  ){
+
+    if(record.blob){
+
+      const img =
+      document.createElement("img");
+
+      img.className =
+      "media";
+
+      img.src =
+      URL.createObjectURL(
+        record.blob
+      );
+
+      img.loading =
+      "lazy";
+
+      box.appendChild(
+        img
+      );
+
+    }
+
+    else{
+
+      const body =
+      document.createElement("div");
+
+      body.textContent =
+      "🖼️ "
+      +
+      (
+        record.filename
+        ||
+        "Imagen"
+      );
+
+      box.appendChild(
+        body
+      );
+
+    }
+
+  }
+
+
+  if(
+    record.type === "video"
+  ){
+
+    if(record.blob){
+
+      const video =
+      document.createElement("video");
+
+      video.className =
+      "media";
+
+      video.controls =
+      true;
+
+      video.preload =
+      "metadata";
+
+      video.src =
+      URL.createObjectURL(
+        record.blob
+      );
+
+      box.appendChild(
+        video
+      );
+
+    }
+
+    else{
+
+      const body =
+      document.createElement("div");
+
+      body.textContent =
+      "🎬 "
+      +
+      (
+        record.filename
+        ||
+        "Video"
+      );
+
+      box.appendChild(
+        body
+      );
+
+    }
+
+  }
+
+
+  messagesElement.appendChild(
+    box
+  );
+
+  messagesElement.scrollTop =
+  messagesElement.scrollHeight;
+
+}
+
+
+async function addRecord(
+  record,
+  mine = false
+){
+
+  if(
+    knownMessageIds.has(
+      record.id
+    )
+  ){
+    return;
+  }
+
+
+  knownMessageIds.add(
+    record.id
+  );
+
+
+  await saveRecord(
+    record
+  );
+
+
+  renderRecord(
+    record,
+    mine
+  );
+
+}
+
+
+// ======================================================
+// CARGAR HISTORIAL
+// ======================================================
+
+async function loadLocalHistory(){
+
+  const history =
+  await getHistory();
+
+
+  messagesElement.innerHTML =
+  "";
+
+
+  for(
+    const record
+    of history
+  ){
+
+    knownMessageIds.add(
+      record.id
+    );
+
+
+    renderRecord(
+      record,
+      record.username === myName
+    );
+
+  }
+
+
+  if(
+    history.length === 0
+  ){
+
+    systemMessage(
+      "Bienvenido al chat global."
+    );
+
+  }
+
+}
+
+
+// ======================================================
+// USUARIOS
+// ======================================================
+
+function updateUsers(){
+
+  if(!room){
+
+    usersElement.textContent =
+    "👥 1 usuario";
+
+    return;
+
+  }
+
+
+  const peerIds =
+  Object.keys(
+    room.getPeers()
+  );
+
+
+  const total =
+  peerIds.length + 1;
+
+
+  usersElement.textContent =
+  "👥 "
+  +
+  total
+  +
+  " usuario"
+  +
+  (
+    total === 1
+    ? ""
+    : "s"
+  );
+
+}
+
+
+// ======================================================
+// REGISTRO
+// ======================================================
+
+function showRegister(){
+
+  registerOverlay.classList.add(
+    "show"
+  );
+
+
+  registerName.value =
+  myName
+  ||
+  "";
+
+
+  setTimeout(
+    ()=>registerName.focus(),
+    100
+  );
+
+}
+
+
+function hideRegister(){
+
+  registerOverlay.classList.remove(
+    "show"
+  );
+
+}
+
+
+async function saveName(){
+
+  const value =
+  registerName.value.trim();
+
+
+  if(!value){
+
+    alert(
+      "Escribe un nombre."
+    );
+
+    return;
+
+  }
+
+
+  myName =
+  value;
+
+
+  localStorage.setItem(
+    NAME_KEY,
+    myName
+  );
+
+
+  currentUser.textContent =
+  "👤 "
+  +
+  myName;
+
+
+  hideRegister();
+
+
+  if(!room){
+
+    await startChat();
+
+  }
+
+}
+
+
+// ======================================================
+// PREVIEW
+// ======================================================
+
+function clearSelectedFile(){
+
+  selectedFile =
+  null;
+
+  fileInput.value =
+  "";
+
+  preview.classList.remove(
+    "show"
+  );
+
+  previewMedia.innerHTML =
+  "";
+
+}
+
+
+function showSelectedFile(file){
+
+  previewMedia.innerHTML =
+  "";
+
+
+  previewName.textContent =
+  file.name;
+
+
+  previewSize.textContent =
+  formatSize(
+    file.size
+  );
+
+
+  const url =
+  URL.createObjectURL(
+    file
+  );
+
+
+  if(
+    file.type.startsWith(
+      "image/"
+    )
+  ){
+
+    const img =
+    document.createElement("img");
+
+    img.src =
+    url;
+
+    previewMedia.appendChild(
+      img
+    );
+
+  }
+
+  else{
+
+    const video =
+    document.createElement("video");
+
+    video.src =
+    url;
+
+    video.muted =
+    true;
+
+    video.playsInline =
+    true;
+
+    previewMedia.appendChild(
+      video
+    );
+
+  }
+
+
+  preview.classList.add(
+    "show"
+  );
+
+}
+
+
+// ======================================================
+// INICIAR CHAT P2P
+// ======================================================
+
+async function startChat(){
+
+  if(
+    !myName
+    ||
+    room
+  ){
+    return;
+  }
+
+
+  statusElement.textContent =
+  "Conectando...";
+
+
+  room =
+  joinRoom(
+    {
+      appId:
+      APP_ID,
+
+      relayConfig:{
+        urls:
+        RELAYS,
+
+        warnOnRelayFailure:
+        false
+      }
+    },
+
+    GLOBAL_ROOM
+  );
+
+
+  chatAction =
+  room.makeAction(
+    "chat-v7"
+  );
+
+
+  nameAction =
+  room.makeAction(
+    "username-v7"
+  );
+
+
+  historyAction =
+  room.makeAction(
+    "history-v7"
+  );
+
+
+  fileAction =
+  room.makeAction(
+    "file-v7"
+  );
+
+
+// ======================================================
+// RECIBIR TEXTO
+// ======================================================
+
+  chatAction.onMessage =
+  async (
+    data,
+    {
+      peerId
+    }
+  )=>{
+
+    if(
+      !data
+      ||
+      !data.id
+    ){
+      return;
+    }
+
+
+    const record = {
+
+      id:
+      data.id,
+
+      type:
+      "text",
+
+      username:
+      data.username
+      ||
+      peerNames.get(peerId)
+      ||
+      "Usuario",
+
+      text:
+      data.text
+      ||
+      "",
+
+      timestamp:
+      data.timestamp
+      ||
+      now()
+
+    };
+
+
+    await addRecord(
+      record,
+      false
+    );
+
+  };
+
+
+// ======================================================
+// RECIBIR NOMBRE
+// ======================================================
+
+  nameAction.onMessage =
+  (
+    value,
+    {
+      peerId
+    }
+  )=>{
+
+    peerNames.set(
+      peerId,
+      String(value)
+    );
+
+  };
+
+
+// ======================================================
+// RECIBIR HISTORIAL
+// ======================================================
+
+  historyAction.onMessage =
+  async data=>{
+
+    if(
+      !Array.isArray(data)
+    ){
+      return;
+    }
+
+
+    const history =
+    data
+    .slice(
+      -MAX_MESSAGES
+    )
+    .sort(
+      (a,b)=>
+        a.timestamp
+        -
+        b.timestamp
+    );
+
+
+    for(
+      const record
+      of history
+    ){
+
+      if(
+        !record.id
+      ){
+        continue;
+      }
+
+
+      await addRecord(
+        record,
+        record.username === myName
+      );
+
+    }
+
+  };
+
+
+// ======================================================
+// RECIBIR ARCHIVO
+// ======================================================
+
+  fileAction.onMessage =
+  async (
+    data,
+    {
+      peerId,
+      metadata
+    }
+  )=>{
+
+    if(
+      !metadata
+      ||
+      !metadata.id
+    ){
+      return;
+    }
+
+
+    const blob =
+    new Blob(
+      [data],
+      {
+        type:
+        metadata.mime
+      }
+    );
+
+
+    const record = {
+
+      id:
+      metadata.id,
+
+      type:
+      metadata.mediaType,
+
+      username:
+      metadata.username
+      ||
+      peerNames.get(peerId)
+      ||
+      "Usuario",
+
+      timestamp:
+      metadata.timestamp
+      ||
+      now(),
+
+      filename:
+      metadata.filename,
+
+      mime:
+      metadata.mime,
+
+      size:
+      blob.size,
+
+      blob:
+      blob
+
+    };
+
+
+    await addRecord(
+      record,
+      false
+    );
+
+  };
+
+
+// ======================================================
+// PEER ENTRA
+// ======================================================
+
+  room.onPeerJoin =
+  async peerId=>{
+
+    updateUsers();
+
+
+    nameAction.send(
+      myName,
+      {
+        target:
+        peerId
+      }
+    );
+
+
+    const history =
+    await getHistory();
+
+
+    const portable =
+    history.map(
+      record=>({
+
+        id:
+        record.id,
+
+        type:
+        record.type,
+
+        username:
+        r}
 
 .title{
   font-size:20px;
