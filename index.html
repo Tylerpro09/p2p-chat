@@ -15,11 +15,9 @@
   --text:#f8fafc;
   --muted:#94a3b8;
   --accent:#5b8cff;
-  --accent2:#3f6fd3;
   --green:#4ade80;
   --bubble:#17243d;
   --bubbleMe:#315fa8;
-  --danger:#fb7185;
 }
 
 *{
@@ -56,8 +54,6 @@ input{
   background:var(--app);
   overflow:hidden;
 }
-
-/* HEADER */
 
 .header{
   flex:0 0 auto;
@@ -137,8 +133,6 @@ input{
   user-select:none;
 }
 
-/* USERS */
-
 .users{
   flex:0 0 auto;
   padding:9px 16px;
@@ -154,8 +148,6 @@ input{
 .users strong{
   color:#dbeafe;
 }
-
-/* MESSAGES */
 
 .messages{
   flex:1 1 auto;
@@ -264,8 +256,6 @@ video.media{
   word-break:break-word;
 }
 
-/* PREVIEW */
-
 .preview{
   flex:0 0 auto;
   display:none;
@@ -326,8 +316,6 @@ video.media{
   cursor:pointer;
 }
 
-/* COMPOSER */
-
 .composer{
   flex:0 0 auto;
   display:grid;
@@ -380,10 +368,8 @@ video.media{
 }
 
 #fileInput{
-  display:none;
+  display:none !important;
 }
-
-/* REGISTER */
 
 .overlay{
   position:fixed;
@@ -464,8 +450,6 @@ video.media{
   text-align:center;
 }
 
-/* MOBILE */
-
 @media(max-width:600px){
   .header{
     padding-left:24px;
@@ -473,34 +457,30 @@ video.media{
   }
 
   .logo{
-    width:70px;
-    height:70px;
+    width:64px;
+    height:64px;
     border-radius:22px;
-    font-size:34px;
+    font-size:32px;
   }
 
   .title{
-    font-size:28px;
+    font-size:27px;
   }
 
   .subline{
-    font-size:20px;
+    font-size:18px;
   }
 
   .avatar{
-    width:68px;
-    height:68px;
-    font-size:25px;
+    width:64px;
+    height:64px;
+    font-size:24px;
   }
 
   .users{
-    padding-left:32px;
-    padding-right:32px;
-    font-size:21px;
-  }
-
-  .messages{
-    padding:12px 10px 16px;
+    padding-left:28px;
+    padding-right:28px;
+    font-size:19px;
   }
 
   .bubble{
@@ -508,28 +488,28 @@ video.media{
   }
 
   .composer{
-    grid-template-columns:80px 1fr 86px;
-    gap:14px;
-    padding:20px 24px;
-    padding-bottom:calc(20px + env(safe-area-inset-bottom));
+    grid-template-columns:72px 1fr 78px;
+    gap:12px;
+    padding:18px 22px;
+    padding-bottom:calc(18px + env(safe-area-inset-bottom));
   }
 
   .iconBtn{
-    width:80px;
-    height:80px;
-    font-size:42px;
+    width:72px;
+    height:72px;
+    font-size:38px;
   }
 
   .input{
-    height:80px;
-    font-size:24px;
-    padding:0 26px;
+    height:72px;
+    font-size:22px;
+    padding:0 24px;
   }
 
   .send{
-    width:86px;
-    height:80px;
-    font-size:33px;
+    width:78px;
+    height:72px;
+    font-size:31px;
   }
 }
 </style>
@@ -540,7 +520,9 @@ video.media{
 <div id="registerOverlay" class="overlay">
   <div class="card">
     <div class="cardLogo">💬</div>
+
     <h2>Elige tu nombre</h2>
+
     <p>
       Se guardará solo en este dispositivo. La próxima vez entrarás automáticamente.
     </p>
@@ -567,43 +549,85 @@ video.media{
 
   <header class="header">
     <div class="left">
-     "
-  type="file"
-  accept="image/*,video/*"
->
+      <div class="logo">💬</div>
+
+      <div class="info">
+        <div class="title">Global Chat</div>
+
+        <div class="subline">
+          <span class="statusDot"></span>
+          <span id="statusText">En línea</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="avatar" class="avatar" title="Cambiar nombre">
+      U
+    </div>
+  </header>
+
+  <div class="users">
+    <span>
+      Conectado como <strong id="currentUser">Usuario</strong>
+    </span>
+
+    <span id="users">
+      👥 1 usuario
+    </span>
+  </div>
+
+  <main id="messages" class="messages">
+    <div class="empty">
+      Cargando chat...
+    </div>
+  </main>
+
+  <div id="preview" class="preview">
+    <div class="previewCard">
+      <div id="previewMedia" class="previewMedia"></div>
+
+      <div class="previewInfo">
+        <div id="previewName" class="previewName"></div>
+        <div id="previewSize" class="previewSize"></div>
+      </div>
+
+      <button id="cancelFile" class="removeFile">
+        ✕
+      </button>
+    </div>
+  </div>
+
+  <div class="composer">
+    <button id="attach" class="iconBtn" title="Adjuntar">
+      +
+    </button>
+
+    <input
+      id="message"
+      class="input"
+      maxlength="2000"
+      placeholder="Escribe un mensaje..."
+    >
+
+    <button id="send" class="send" title="Enviar">
+      ➤
+    </button>
+  </div>
+
+  <input id="fileInput" style="display:none" type="file" accept="image/*,video/*">
 
 </div>
 
-
 <script type="module">
+import { joinRoom } from "https://esm.run/trystero@0.25.3";
 
-import {
-  joinRoom
-}
-from "https://esm.run/trystero@0.25.3";
+const GLOBAL_ROOM = "TYLERPRO09-GLOBAL-CHAT-PRO-V3";
+const APP_ID = "tylerpro09-global-chat-pro-v3";
+const NAME_KEY = "global-chat-name-pro-v3";
 
-
-// =====================================================
-// CONFIG
-// =====================================================
-
-const GLOBAL_ROOM =
-"TYLERPRO09-GLOBAL-CHAT-PRO-V1";
-
-const APP_ID =
-"tylerpro09-global-chat-pro-v1";
-
-const NAME_KEY =
-"global-chat-user";
-
-const MAX_MESSAGES =
-200;
-
-const MAX_IMAGE =
-10 * 1024 * 1024;
-
-const MAX_VIDEO =
-50 * 1024 * 1024;
+const MAX_MESSAGES = 200;
+const MAX_IMAGE = 10 * 1024 * 1024;
+const MAX_VIDEO = 50 * 1024 * 1024;
 
 const RELAYS = [
   "wss://relay.damus.io",
@@ -612,67 +636,260 @@ const RELAYS = [
   "wss://nostr.wine"
 ];
 
+const registerOverlay = document.getElementById("registerOverlay");
+const registerName = document.getElementById("registerName");
+const registerButton = document.getElementById("registerButton");
 
-// =====================================================
-// ELEMENTS
-// =====================================================
+const avatar = document.getElementById("avatar");
+const currentUser = document.getElementById("currentUser");
+const usersElement = document.getElementById("users");
+const statusText = document.getElementById("statusText");
 
-const registerOverlay =
-document.getElementById(
-  "registerOverlay"
-);
+const messagesElement = document.getElementById("messages");
+const messageInput = document.getElementById("message");
+const sendButton = document.getElementById("send");
 
-const registerName =
-document.getElementById(
-  "registerName"
-);
+const attachButton = document.getElementById("attach");
+const fileInput = document.getElementById("fileInput");
 
-const registerButton =
-document.getElementById(
-  "registerButton"
-);
+const preview = document.getElementById("preview");
+const previewMedia = document.getElementById("previewMedia");
+const previewName = document.getElementById("previewName");
+const previewSize = document.getElementById("previewSize");
+const cancelFile = document.getElementById("cancelFile");
 
-const avatar =
-document.getElementById(
-  "avatar"
-);
+let myName = localStorage.getItem(NAME_KEY);
+let room = null;
+let chatAction = null;
+let nameAction = null;
+let historyAction = null;
+let fileAction = null;
+let selectedFile = null;
 
-const currentUser =
-document.getElementById(
-  "currentUser"
-);
+const peerNames = new Map();
+const knownIds = new Set();
 
-const statusElement =
-document.getElementById(
-  "status"
-);
+function makeId(){
+  if(crypto.randomUUID){
+    return crypto.randomUUID();
+  }
 
-const statusText =
-document.getElementById(
-  "statusText"
-);
+  return Date.now() + "-" + Math.random().toString(36).slice(2);
+}
 
-const usersElement =
-document.getElementById(
-  "users"
-);
+function now(){
+  return Date.now();
+}
 
-const messagesElement =
-document.getElementById(
-  "messages"
-);
+function formatTime(ms){
+  return new Date(ms).toLocaleTimeString([], {
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+}
 
-const messageInput =
-document.getElementById(
-  "message"
-);
+function formatSize(bytes){
+  if(bytes < 1024){
+    return bytes + " B";
+  }
 
-const sendButton =
-document.getElementById(
-  "send"
-);
+  if(bytes < 1024 * 1024){
+    return (bytes / 1024).toFixed(1) + " KB";
+  }
 
-const attachButton =
+  return (bytes / 1024 / 1024).toFixed(1) + " MB";
+}
+
+function safeName(name){
+  const value = String(name || "").trim();
+
+  if(!value || value.toLowerCase() === "usuario"){
+    return "";
+  }
+
+  return value.slice(0,30);
+}
+
+function setUIName(){
+  const name = safeName(myName);
+
+  if(!name){
+    currentUser.textContent = "Sin nombre";
+    avatar.textContent = "?";
+    return;
+  }
+
+  currentUser.textContent = name;
+  avatar.textContent = name.charAt(0).toUpperCase();
+}
+
+function scrollBottom(){
+  requestAnimationFrame(() => {
+    messagesElement.scrollTop = messagesElement.scrollHeight;
+  });
+}
+
+function updateUsers(){
+  let total = 1;
+
+  if(room){
+    try{
+      total += Object.keys(room.getPeers()).length;
+    }catch(error){}
+  }
+
+  usersElement.textContent =
+    "👥 " + total + " usuario" + (total === 1 ? "" : "s");
+}
+
+function setOnline(){
+  statusText.textContent = "En línea";
+}
+
+const DB_NAME = "global-chat-pro-db-v3";
+const DB_VERSION = 1;
+const STORE = "messages";
+
+function openDB(){
+  return new Promise((resolve,reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+    request.onupgradeneeded = () => {
+      const db = request.result;
+
+      if(!db.objectStoreNames.contains(STORE)){
+        const store = db.createObjectStore(STORE, { keyPath:"id" });
+        store.createIndex("timestamp", "timestamp");
+      }
+    };
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function getAllRecords(){
+  try{
+    const db = await openDB();
+
+    const records = await new Promise((resolve,reject) => {
+      const tx = db.transaction(STORE, "readonly");
+      const req = tx.objectStore(STORE).getAll();
+
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+
+    db.close();
+
+    records.sort((a,b) => (a.timestamp || 0) - (b.timestamp || 0));
+
+    return records;
+  }catch(error){
+    console.error("IndexedDB get error:", error);
+    return [];
+  }
+}
+
+async function saveRecord(record){
+  try{
+    const db = await openDB();
+
+    await new Promise((resolve,reject) => {
+      const tx = db.transaction(STORE, "readwrite");
+      tx.objectStore(STORE).put(record);
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+    });
+
+    db.close();
+
+    await trimRecords();
+  }catch(error){
+    console.error("IndexedDB save error:", error);
+  }
+}
+
+async function trimRecords(){
+  const records = await getAllRecords();
+
+  if(records.length <= MAX_MESSAGES){
+    return;
+  }
+
+  const old = records.slice(0, records.length - MAX_MESSAGES);
+
+  try{
+    const db = await openDB();
+
+    await new Promise((resolve,reject) => {
+      const tx = db.transaction(STORE, "readwrite");
+      const store = tx.objectStore(STORE);
+
+      for(const item of old){
+        store.delete(item.id);
+      }
+
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+    });
+
+    db.close();
+  }catch(error){
+    console.error("IndexedDB trim error:", error);
+  }
+}
+
+async function getHistory(){
+  const records = await getAllRecords();
+  return records.slice(-MAX_MESSAGES);
+}
+
+function clearEmpty(){
+  const empty = messagesElement.querySelector(".empty");
+
+  if(empty){
+    empty.remove();
+  }
+}
+
+function systemMessage(text){
+  clearEmpty();
+
+  const div = document.createElement("div");
+  div.className = "system";
+  div.textContent = text;
+
+  messagesElement.appendChild(div);
+  scrollBottom();
+}
+
+function renderRecord(record, mine = false){
+  if(!record || !record.id){
+    return;
+  }
+
+  if(document.querySelector(`[data-message-id="${record.id}"]`)){
+    return;
+  }
+
+  clearEmpty();
+
+  const row = document.createElement("div");
+  row.className = "row";
+  row.dataset.messageId = record.id;
+
+  if(mine){
+    row.classList.add("mine");
+  }
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+
+  const meta = document.createElement("div");
+  meta.className = "meta";
+
+ chButton =
 document.getElementById(
   "attach"
 );
