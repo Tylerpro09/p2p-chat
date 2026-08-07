@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Trystero P2P Chat</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Chat Global P2P</title>
 
   <style>
     *{
@@ -12,108 +12,149 @@
 
     body{
       margin:0;
-      font-family:Arial,sans-serif;
-      background:#0b1020;
+      min-height:100vh;
+      background:#080d18;
       color:white;
+      font-family:Arial,sans-serif;
     }
 
     .app{
-      max-width:900px;
-      margin:auto;
+      width:min(900px,100%);
       min-height:100vh;
+      margin:auto;
       display:flex;
       flex-direction:column;
-      padding:15px;
+      background:#0b1220;
     }
 
-    .panel{
-      background:#151d32;
-      border:1px solid #2d3c60;
-      border-radius:15px;
+    header{
+      background:#10192b;
       padding:15px;
-      margin-bottom:15px;
+      border-bottom:1px solid #283a5d;
     }
 
     h1{
-      margin-top:0;
+      margin:0;
+      font-size:22px;
     }
 
-    input,button{
-      width:100%;
+    #status{
+      margin-top:6px;
+      color:#9cafcc;
+      font-size:13px;
+      word-break:break-all;
+    }
+
+    .login{
+      display:flex;
+      gap:8px;
       padding:12px;
-      margin-top:8px;
+      background:#10192b;
+    }
+
+    input,
+    button{
       border-radius:10px;
-      border:1px solid #34466d;
+      border:1px solid #30466c;
+      padding:12px;
       font-size:16px;
     }
 
     input{
-      background:#0d1528;
+      flex:1;
+      background:#0c1527;
       color:white;
+      outline:none;
     }
 
     button{
-      background:#5b9cff;
-      color:#07101e;
+      background:#5999ff;
+      color:#061020;
       font-weight:bold;
       cursor:pointer;
     }
 
     button:disabled{
-      opacity:.5;
+      opacity:.45;
+      cursor:not-allowed;
+    }
+
+    #peers{
+      padding:9px 12px;
+      background:#0c1527;
+      color:#9cafcc;
+      font-size:12px;
+      border-bottom:1px solid #203252;
     }
 
     #messages{
-      height:50vh;
+      flex:1;
+      min-height:60vh;
       overflow-y:auto;
-      background:#0d1528;
-      border-radius:12px;
-      padding:12px;
-      margin-bottom:10px;
+      padding:15px;
     }
 
     .message{
-      background:#1b2947;
+      max-width:80%;
+      background:#17243d;
+      border:1px solid #263d64;
+      border-radius:12px;
       padding:10px;
-      margin:8px 0;
-      border-radius:10px;
+      margin-bottom:10px;
+      word-break:break-word;
     }
 
-    .mine{
-      background:#164b7a;
+    .message.mine{
+      margin-left:auto;
+      background:#17436e;
+    }
+
+    .username{
+      color:#80b4ff;
+      font-size:12px;
+      font-weight:bold;
+      margin-bottom:4px;
+    }
+
+    .time{
+      color:#8497b7;
+      font-size:10px;
+      margin-left:7px;
+      font-weight:normal;
     }
 
     .system{
-      color:#9fb0cf;
+      color:#8394b1;
       text-align:center;
-      font-size:13px;
+      font-size:12px;
       margin:10px;
     }
 
-    .peer{
-      font-size:13px;
-      padding:5px;
-      color:#a8c4ff;
-    }
-
-    .online{
-      color:#55df8c;
-    }
-
-    .row{
+    .composer{
       display:grid;
       grid-template-columns:1fr 100px;
       gap:8px;
+      padding:12px;
+      background:#10192b;
+      border-top:1px solid #283a5d;
+      position:sticky;
+      bottom:0;
     }
 
     @media(max-width:600px){
-      .row{
+
+      .message{
+        max-width:92%;
+      }
+
+      .composer{
         grid-template-columns:1fr 85px;
       }
 
-      #messages{
-        height:55vh;
+      .login{
+        flex-direction:column;
       }
+
     }
   </style>
 </head>
@@ -122,69 +163,61 @@
 
 <div class="app">
 
-  <div class="panel">
+  <header>
 
-    <h1>⚡ P2P Chat</h1>
+    <h1>🌎 Chat Global P2P</h1>
 
     <div id="status">
-      Estado: desconectado
+      Desconectado
     </div>
+
+  </header>
+
+
+  <div class="login">
 
     <input
       id="username"
-      placeholder="Tu nombre"
+      maxlength="30"
+      placeholder="Escribe tu nombre"
     >
 
-    <input
-      id="room"
-      placeholder="Nombre de sala"
-    >
-
-    <button id="join">
+    <button id="connect">
       Entrar
     </button>
 
-    <button id="random">
-      Crear sala aleatoria
-    </button>
+  </div>
 
-    <button id="leave" disabled>
-      Salir
-    </button>
 
-    <h3>Peers conectados</h3>
+  <div id="peers">
+    👥 0 usuarios conectados
+  </div>
 
-    <div id="peers">
-      Ninguno
+
+  <div id="messages">
+
+    <div class="system">
+      Bienvenido al chat global.
     </div>
 
   </div>
 
 
-  <div class="panel">
+  <div class="composer">
 
-    <div id="messages">
-      <div class="system">
-        Entra a una sala para comenzar.
-      </div>
-    </div>
+    <input
+      id="message"
+      maxlength="2000"
+      placeholder="Escribe un mensaje..."
+      disabled
+    >
 
-    <div class="row">
-
-      <input
-        id="message"
-        placeholder="Escribe mensaje..."
-        disabled
-      >
-
-      <button
-        id="send"
-        disabled
-      >
-        Enviar
-      </button>
-
-    </div>
+    <button
+      id="send"
+      disabled
+    >
+      Enviar
+    </button>
 
   </div>
 
@@ -200,57 +233,126 @@ import {
 from "https://esm.run/trystero";
 
 
+// =========================================
+// ÚNICA SALA GLOBAL
+// =========================================
+
+const GLOBAL_ROOM =
+"TYLERPRO09-GLOBAL-CHAT-ONLY-ONE";
+
+
+// Todos deben usar también el mismo appId.
+
+const APP_ID =
+"tylerpro09-global-p2p-chat-v2";
+
+
+// =========================================
+// ELEMENTOS
+// =========================================
+
 const usernameInput =
-document.getElementById("username");
+document.getElementById(
+  "username"
+);
 
-const roomInput =
-document.getElementById("room");
-
-const joinButton =
-document.getElementById("join");
-
-const leaveButton =
-document.getElementById("leave");
-
-const randomButton =
-document.getElementById("random");
 
 const messageInput =
-document.getElementById("message");
+document.getElementById(
+  "message"
+);
+
+
+const connectButton =
+document.getElementById(
+  "connect"
+);
+
 
 const sendButton =
-document.getElementById("send");
+document.getElementById(
+  "send"
+);
 
-const messages =
-document.getElementById("messages");
 
-const status =
-document.getElementById("status");
+const messagesElement =
+document.getElementById(
+  "messages"
+);
+
 
 const peersElement =
-document.getElementById("peers");
+document.getElementById(
+  "peers"
+);
 
+
+const statusElement =
+document.getElementById(
+  "status"
+);
+
+
+// =========================================
+// ESTADO
+// =========================================
 
 let room = null;
 
 let sendChat = null;
 
-let sendName = null;
+let sendUsername = null;
 
-const peers = new Map();
+const peers =
+new Map();
 
+
+// =========================================
+// NOMBRE GUARDADO
+// =========================================
 
 usernameInput.value =
-localStorage.getItem("username")
+localStorage.getItem(
+  "global-chat-name"
+)
 ||
-"Usuario" + Math.floor(Math.random() * 9999);
+"Usuario"
++
+Math.floor(
+  Math.random() * 9999
+);
 
 
+// =========================================
+// HORA
+// =========================================
 
-function addSystem(text){
+function currentTime(){
+
+  return new Date()
+  .toLocaleTimeString(
+    [],
+    {
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+
+}
+
+
+// =========================================
+// MENSAJE DEL SISTEMA
+// =========================================
+
+function addSystem(
+  text
+){
 
   const div =
-  document.createElement("div");
+  document.createElement(
+    "div"
+  );
 
   div.className =
   "system";
@@ -258,116 +360,170 @@ function addSystem(text){
   div.textContent =
   text;
 
-  messages.appendChild(div);
+  messagesElement.appendChild(
+    div
+  );
 
-  messages.scrollTop =
-  messages.scrollHeight;
+  messagesElement.scrollTop =
+  messagesElement.scrollHeight;
 
 }
 
 
+// =========================================
+// MENSAJE NORMAL
+// =========================================
 
 function addMessage(
-  name,
-  text,
+  data,
   mine = false
 ){
 
-  const div =
-  document.createElement("div");
+  const container =
+  document.createElement(
+    "div"
+  );
 
-  div.className =
+
+  container.className =
   "message";
+
 
   if(mine){
 
-    div.classList.add("mine");
+    container.classList.add(
+      "mine"
+    );
 
   }
 
-  const title =
-  document.createElement("b");
 
-  title.textContent =
-  name;
+  const username =
+  document.createElement(
+    "div"
+  );
+
+
+  username.className =
+  "username";
+
+
+  username.textContent =
+  data.username
+  ||
+  "Anónimo";
+
+
+  const time =
+  document.createElement(
+    "span"
+  );
+
+
+  time.className =
+  "time";
+
+
+  time.textContent =
+  data.time
+  ||
+  currentTime();
+
+
+  username.appendChild(
+    time
+  );
+
 
   const body =
-  document.createElement("div");
+  document.createElement(
+    "div"
+  );
+
 
   body.textContent =
-  text;
+  data.text
+  ||
+  "";
 
-  div.appendChild(title);
 
-  div.appendChild(body);
+  container.appendChild(
+    username
+  );
 
-  messages.appendChild(div);
 
-  messages.scrollTop =
-  messages.scrollHeight;
+  container.appendChild(
+    body
+  );
+
+
+  messagesElement.appendChild(
+    container
+  );
+
+
+  messagesElement.scrollTop =
+  messagesElement.scrollHeight;
 
 }
 
 
+// =========================================
+// CONTADOR DE USUARIOS
+// =========================================
 
 function updatePeers(){
 
-  peersElement.innerHTML = "";
+  const total =
+  peers.size + 1;
 
-  if(peers.size === 0){
 
-    peersElement.textContent =
-    "Ninguno";
+  peersElement.textContent =
+  "👥 "
+  +
+  total
+  +
+  " usuario"
+  +
+  (
+    total === 1
+    ? ""
+    : "s"
+  )
+  +
+  " conectado"
+  +
+  (
+    total === 1
+    ? ""
+    : "s"
+  );
+
+}
+
+
+// =========================================
+// CONECTAR
+// =========================================
+
+function connect(){
+
+  if(room){
 
     return;
 
   }
 
-  for(
-    const [id,name]
-    of peers
-  ){
-
-    const div =
-    document.createElement("div");
-
-    div.className =
-    "peer";
-
-    div.textContent =
-    "🟢 "
-    +
-    (name || id.slice(0,8));
-
-    peersElement.appendChild(div);
-
-  }
-
-}
-
-
-
-function join(){
 
   const username =
   usernameInput.value.trim();
 
-  const roomName =
-  roomInput.value.trim();
-
 
   if(!username){
 
-    alert("Escribe tu nombre");
-
-    return;
-
-  }
-
-
-  if(!roomName){
-
-    alert("Escribe una sala");
+    alert(
+      "Escribe tu nombre."
+    );
 
     return;
 
@@ -375,164 +531,236 @@ function join(){
 
 
   localStorage.setItem(
-    "username",
+    "global-chat-name",
     username
   );
 
+
+  statusElement.textContent =
+  "🟡 Conectando al chat global...";
+
+
+  // =====================================
+  // TODOS ENTRAN OBLIGATORIAMENTE
+  // A LA MISMA SALA
+  // =====================================
 
   room =
   joinRoom(
     {
       appId:
-      "mi-chat-trystero-p2p"
+      APP_ID
     },
-    roomName
+    GLOBAL_ROOM
   );
 
+
+  // =====================================
+  // ACCIONES P2P
+  // =====================================
 
   sendChat =
   room.makeAction(
-    "chat"
+    "global-message"
   );
 
 
-  sendName =
+  sendUsername =
   room.makeAction(
-    "username"
+    "global-username"
   );
 
 
+  // =====================================
+  // RECIBIR MENSAJE
+  // =====================================
 
   sendChat.onMessage =
   (
     data,
-    peerId
+    meta
   )=>{
 
-    let name =
+    const peerId =
+    meta.peerId;
+
+
+    const username =
+    data?.username
+    ||
     peers.get(peerId)
     ||
-    "Peer";
+    "Usuario";
 
-    if(data.name){
 
-      name =
-      data.name;
+    const text =
+    data?.text
+    ||
+    "";
+
+
+    if(!text){
+
+      return;
 
     }
 
+
     addMessage(
-      name,
-      data.text
+      {
+        username:
+        username,
+
+        text:
+        text,
+
+        time:
+        data?.time
+        ||
+        currentTime()
+      }
     );
 
   };
 
 
+  // =====================================
+  // RECIBIR NOMBRE
+  // =====================================
 
-  sendName.onMessage =
+  sendUsername.onMessage =
   (
     name,
-    peerId
+    meta
   )=>{
 
     peers.set(
-      peerId,
-      name
+      meta.peerId,
+      String(name)
     );
+
 
     updatePeers();
 
   };
 
 
+  // =====================================
+  // PEER ENTRA
+  // =====================================
 
   room.onPeerJoin =
   peerId=>{
 
     peers.set(
       peerId,
-      peerId.slice(0,8)
+      "Usuario"
     );
+
 
     updatePeers();
 
+
     addSystem(
-      "Nuevo peer conectado"
+      "🟢 Nuevo usuario conectado"
     );
 
 
-    sendName(
+    sendUsername.send(
       username,
-      peerId
+      {
+        target:
+        peerId
+      }
     );
 
   };
 
 
+  // =====================================
+  // PEER SALE
+  // =====================================
 
   room.onPeerLeave =
   peerId=>{
+
+    const name =
+    peers.get(peerId)
+    ||
+    "Usuario";
+
 
     peers.delete(
       peerId
     );
 
+
     updatePeers();
 
+
     addSystem(
-      "Peer desconectado"
+      "🔴 "
+      +
+      name
+      +
+      " se desconectó"
     );
 
   };
 
 
+  // =====================================
+  // UI
+  // =====================================
 
-  status.innerHTML =
-  "Estado: <span class='online'>conectado</span>"
+  statusElement.innerHTML =
+  "🟢 Conectado al chat global"
   +
-  "<br>Sala: "
+  "<br>"
   +
-  roomName
-  +
-  "<br>Tu Peer ID: "
+  "Peer ID: "
   +
   selfId;
 
 
-
-  joinButton.disabled =
+  connectButton.disabled =
   true;
 
-  leaveButton.disabled =
-  false;
+
+  usernameInput.disabled =
+  true;
+
 
   messageInput.disabled =
   false;
 
+
   sendButton.disabled =
   false;
 
-  roomInput.disabled =
-  true;
 
+  updatePeers();
 
-  messages.innerHTML =
-  "";
 
   addSystem(
-    "Conectado a sala: "
+    "🌎 Entraste al chat global como "
     +
-    roomName
+    username
   );
+
+
+  messageInput.focus();
 
 }
 
 
+// =========================================
+// ENVIAR MENSAJE
+// =========================================
 
 function sendMessage(){
 
-  if(!room){
+  if(!sendChat){
 
     return;
 
@@ -550,32 +778,27 @@ function sendMessage(){
   }
 
 
-  const username =
-  usernameInput.value.trim();
-
-
   const data = {
 
-    name:
-    username,
+    username:
+    usernameInput.value.trim(),
 
     text:
     text,
 
     time:
-    Date.now()
+    currentTime()
 
   };
 
 
-  sendChat(
+  sendChat.send(
     data
   );
 
 
   addMessage(
-    username,
-    text,
+    data,
     true
   );
 
@@ -583,84 +806,22 @@ function sendMessage(){
   messageInput.value =
   "";
 
-}
 
-
-
-function leave(){
-
-  if(room){
-
-    room.leave();
-
-  }
-
-
-  room =
-  null;
-
-  peers.clear();
-
-  updatePeers();
-
-
-  status.textContent =
-  "Estado: desconectado";
-
-
-  joinButton.disabled =
-  false;
-
-  leaveButton.disabled =
-  true;
-
-  messageInput.disabled =
-  true;
-
-  sendButton.disabled =
-  true;
-
-  roomInput.disabled =
-  false;
-
-
-  messages.innerHTML =
-  "";
-
-  addSystem(
-    "Desconectado"
-  );
+  messageInput.focus();
 
 }
 
 
+// =========================================
+// EVENTOS
+// =========================================
 
-joinButton.onclick =
-join;
+connectButton.onclick =
+connect;
 
 
 sendButton.onclick =
 sendMessage;
-
-
-leaveButton.onclick =
-leave;
-
-
-randomButton.onclick =
-()=>{
-
-  roomInput.value =
-  "sala-"
-  +
-  crypto
-  .getRandomValues(
-    new Uint32Array(2)
-  )
-  .join("-");
-
-};
-
 
 
 messageInput.addEventListener(
@@ -669,7 +830,11 @@ messageInput.addEventListener(
 
     if(
       event.key === "Enter"
+      &&
+      !event.shiftKey
     ){
+
+      event.preventDefault();
 
       sendMessage();
 
@@ -679,6 +844,9 @@ messageInput.addEventListener(
 );
 
 
+// =========================================
+// CERRAR CONEXIÓN
+// =========================================
 
 window.addEventListener(
   "beforeunload",
