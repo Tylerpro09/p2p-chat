@@ -7,19 +7,19 @@
 
 <style>
 :root{
-  --bg:#0b1020;
-  --panel:#11182a;
-  --panel-2:#182238;
-  --panel-3:#0f1728;
-  --line:#25324c;
-  --text:#f5f7fb;
-  --muted:#95a3bc;
+  --bg:#070d1a;
+  --app:#0b1220;
+  --header:#111a2c;
+  --bar:#0f1728;
+  --line:#263653;
+  --text:#f8fafc;
+  --muted:#94a3b8;
   --accent:#5b8cff;
-  --accent-2:#3e6ed1;
-  --success:#4ade80;
+  --accent2:#3f6fd3;
+  --green:#4ade80;
+  --bubble:#17243d;
+  --bubbleMe:#315fa8;
   --danger:#fb7185;
-  --bubble:#1b2942;
-  --bubble-me:#315fa8;
 }
 
 *{
@@ -29,22 +29,15 @@
 html,
 body{
   margin:0;
-  min-height:100%;
-  background:
-    radial-gradient(circle at top,#17213a 0,#0b1020 42%);
+  width:100%;
+  height:100%;
+  background:var(--bg);
   color:var(--text);
-  font-family:
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
 }
 
 body{
-  min-height:100vh;
+  overflow:hidden;
 }
 
 button,
@@ -52,89 +45,71 @@ input{
   font:inherit;
 }
 
-button{
-  -webkit-tap-highlight-color:transparent;
-}
-
 .app{
-  width:min(940px,100%);
+  width:100%;
+  max-width:920px;
+  height:100dvh;
   min-height:100vh;
-  margin:auto;
+  margin:0 auto;
   display:flex;
   flex-direction:column;
-  background:rgba(12,18,31,.92);
-  backdrop-filter:blur(16px);
-  border-left:1px solid rgba(255,255,255,.04);
-  border-right:1px solid rgba(255,255,255,.04);
+  background:var(--app);
+  overflow:hidden;
 }
 
 /* HEADER */
 
 .header{
-  min-height:72px;
+  flex:0 0 auto;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:14px;
-  padding:14px 18px;
-  background:rgba(17,24,42,.96);
+  gap:12px;
+  padding:14px 16px;
+  padding-top:calc(14px + env(safe-area-inset-top));
+  background:var(--header);
   border-bottom:1px solid var(--line);
-  position:sticky;
-  top:0;
-  z-index:20;
 }
 
-.brand{
+.left{
   display:flex;
   align-items:center;
   gap:12px;
   min-width:0;
 }
 
-.brandIcon{
-  width:42px;
-  height:42px;
-  border-radius:14px;
-  background:
-    linear-gradient(145deg,#6ea0ff,#466fd0);
+.logo{
+  width:48px;
+  height:48px;
+  border-radius:16px;
   display:grid;
   place-items:center;
-  font-size:20px;
-  box-shadow:
-    0 10px 30px rgba(91,140,255,.24);
+  background:linear-gradient(145deg,#7aa5ff,#486edb);
+  box-shadow:0 12px 35px rgba(91,140,255,.28);
+  font-size:25px;
+  flex:0 0 auto;
 }
 
-.brandText{
+.info{
   min-width:0;
 }
 
 .title{
-  font-size:17px;
-  font-weight:800;
-  letter-spacing:.1px;
+  font-size:21px;
+  font-weight:900;
+  line-height:1.1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
-.subtitle{
-  margin-top:2px;
+.subline{
+  margin-top:5px;
+  display:flex;
+  align-items:center;
+  gap:8px;
   color:var(--muted);
-  font-size:12px;
-}
-
-.headerRight{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.status{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  padding:7px 10px;
-  border-radius:999px;
-  background:#121d31;
-  color:#bdc8db;
-  font-size:12px;
+  font-size:13px;
   white-space:nowrap;
 }
 
@@ -142,120 +117,125 @@ button{
   width:8px;
   height:8px;
   border-radius:50%;
-  background:#64748b;
-}
-
-.status.online .statusDot{
-  background:var(--success);
+  background:var(--green);
   box-shadow:0 0 14px rgba(74,222,128,.55);
 }
 
 .avatar{
-  width:38px;
-  height:38px;
+  width:48px;
+  height:48px;
   border-radius:50%;
-  background:#213154;
   display:grid;
   place-items:center;
-  font-weight:800;
-  color:#dce8ff;
-  border:1px solid #345081;
+  background:#1d2d50;
+  border:1px solid #375287;
+  color:#dbeafe;
+  font-weight:900;
+  font-size:18px;
+  flex:0 0 auto;
   cursor:pointer;
   user-select:none;
 }
 
-/* USER BAR */
+/* USERS */
 
-.userBar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:9px 18px;
-  background:#0f1728;
+.users{
+  flex:0 0 auto;
+  padding:9px 16px;
+  background:var(--bar);
   border-bottom:1px solid var(--line);
   color:var(--muted);
-  font-size:12px;
-}
-
-.userBar strong{
-  color:#d7e0ef;
-}
-
-.userCount{
+  font-size:13px;
   display:flex;
-  align-items:center;
-  gap:6px;
+  justify-content:space-between;
+  gap:10px;
 }
 
-/* CHAT */
+.users strong{
+  color:#dbeafe;
+}
+
+/* MESSAGES */
 
 .messages{
-  flex:1;
-  min-height:60vh;
+  flex:1 1 auto;
   overflow-y:auto;
-  padding:18px;
+  overflow-x:hidden;
+  padding:14px 12px 18px;
   scroll-behavior:smooth;
 }
 
-.dayLabel{
-  width:max-content;
-  margin:12px auto;
-  padding:5px 10px;
-  border-radius:999px;
-  background:#121b2c;
-  border:1px solid #202d45;
-  color:#8593aa;
-  font-size:11px;
+.empty{
+  height:100%;
+  min-height:300px;
+  display:grid;
+  place-items:center;
+  color:#64748b;
+  text-align:center;
+  padding:30px;
+  font-size:14px;
 }
 
-.messageRow{
+.system{
+  width:max-content;
+  max-width:88%;
+  margin:12px auto;
+  padding:7px 11px;
+  border-radius:999px;
+  background:#111a2b;
+  border:1px solid #22314b;
+  color:#8fa0ba;
+  font-size:12px;
+  text-align:center;
+}
+
+.row{
   display:flex;
   margin:8px 0;
 }
 
-.messageRow.mine{
+.row.mine{
   justify-content:flex-end;
 }
 
 .bubble{
-  max-width:min(76%,580px);
+  max-width:min(82%,560px);
   background:var(--bubble);
-  border:1px solid #2a3c5c;
-  border-radius:16px 16px 16px 5px;
+  border:1px solid #2a3b5b;
+  border-radius:17px 17px 17px 5px;
   padding:10px 12px 8px;
-  box-shadow:0 8px 25px rgba(0,0,0,.08);
+  box-shadow:0 8px 28px rgba(0,0,0,.12);
 }
 
-.messageRow.mine .bubble{
-  background:var(--bubble-me);
-  border-color:#4875bd;
-  border-radius:16px 16px 5px 16px;
+.row.mine .bubble{
+  background:var(--bubbleMe);
+  border-color:#4774bd;
+  border-radius:17px 17px 5px 17px;
 }
 
-.messageMeta{
+.meta{
   display:flex;
   align-items:center;
   gap:7px;
   margin-bottom:5px;
-  font-size:11px;
 }
 
-.messageName{
-  color:#9dc0ff;
-  font-weight:750;
+.name{
+  color:#9cc0ff;
+  font-size:12px;
+  font-weight:800;
 }
 
-.messageRow.mine .messageName{
-  color:#d9e7ff;
+.row.mine .name{
+  color:#e0ecff;
 }
 
-.messageTime{
-  color:#98a5b8;
+.time{
+  color:#a5b4c8;
   font-size:10px;
 }
 
-.messageText{
+.text{
   font-size:15px;
   line-height:1.42;
   white-space:pre-wrap;
@@ -264,10 +244,10 @@ button{
 
 .media{
   display:block;
-  max-width:100%;
   width:min(430px,100%);
+  max-width:100%;
   margin-top:8px;
-  border-radius:13px;
+  border-radius:14px;
   background:#050914;
   border:1px solid rgba(255,255,255,.08);
 }
@@ -276,30 +256,20 @@ video.media{
   max-height:420px;
 }
 
-.fileMeta{
+.fileName{
   margin-top:6px;
-  color:#a8b4c9;
   font-size:11px;
+  color:#cbd5e1;
+  opacity:.85;
+  word-break:break-word;
 }
 
-.systemMessage{
-  width:max-content;
-  max-width:90%;
-  margin:12px auto;
-  padding:6px 10px;
-  border-radius:999px;
-  background:#111a2b;
-  border:1px solid #202d44;
-  color:#8290a8;
-  font-size:11px;
-  text-align:center;
-}
-
-/* ATTACH PREVIEW */
+/* PREVIEW */
 
 .preview{
+  flex:0 0 auto;
   display:none;
-  padding:10px 14px;
+  padding:10px 12px;
   background:#0f1728;
   border-top:1px solid var(--line);
 }
@@ -311,11 +281,11 @@ video.media{
 .previewCard{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:10px;
+  padding:9px;
+  border-radius:15px;
   background:#151f33;
   border:1px solid #2b3b58;
-  border-radius:14px;
-  padding:9px;
 }
 
 .previewMedia img,
@@ -323,13 +293,13 @@ video.media{
   width:62px;
   height:62px;
   object-fit:cover;
-  border-radius:10px;
+  border-radius:11px;
   background:#050914;
 }
 
 .previewInfo{
-  flex:1;
   min-width:0;
+  flex:1;
 }
 
 .previewName{
@@ -337,75 +307,76 @@ video.media{
   overflow:hidden;
   text-overflow:ellipsis;
   font-size:13px;
-  font-weight:650;
+  font-weight:700;
 }
 
 .previewSize{
+  margin-top:4px;
   color:var(--muted);
   font-size:11px;
-  margin-top:4px;
 }
 
 .removeFile{
-  width:34px;
-  height:34px;
+  width:36px;
+  height:36px;
   border:0;
   border-radius:50%;
-  background:#34202b;
-  color:#ffc3cd;
+  background:#3a202b;
+  color:#ffc2cd;
   cursor:pointer;
 }
 
 /* COMPOSER */
 
 .composer{
+  flex:0 0 auto;
   display:grid;
-  grid-template-columns:44px 1fr 48px;
+  grid-template-columns:46px 1fr 50px;
   gap:9px;
   align-items:center;
-  padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+  padding:12px;
+  padding-bottom:calc(12px + env(safe-area-inset-bottom));
   background:#10192b;
   border-top:1px solid var(--line);
-  position:sticky;
-  bottom:0;
-  z-index:18;
 }
 
-.iconButton{
-  width:44px;
-  height:44px;
+.iconBtn{
+  width:46px;
+  height:46px;
   border-radius:50%;
   border:1px solid #30415f;
   background:#1d2a43;
-  color:#dbe7fb;
+  color:#e2e8f0;
+  font-size:24px;
+  line-height:1;
   cursor:pointer;
-  font-size:18px;
 }
 
-.messageInput{
-  height:44px;
-  border:1px solid #30415f;
+.input{
+  width:100%;
+  height:46px;
   border-radius:999px;
+  border:1px solid #33445f;
   background:#0d1626;
   color:white;
-  padding:0 16px;
   outline:none;
+  padding:0 17px;
 }
 
-.messageInput:focus{
-  border-color:#5477af;
+.input:focus{
+  border-color:#587bb6;
 }
 
-.sendButton{
-  width:48px;
-  height:44px;
+.send{
+  width:50px;
+  height:46px;
   border:0;
   border-radius:50%;
-  background:linear-gradient(145deg,#6797ff,#4879df);
+  background:linear-gradient(145deg,#6b9cff,#4977dc);
   color:white;
-  font-size:19px;
+  font-size:20px;
   cursor:pointer;
-  box-shadow:0 7px 20px rgba(91,140,255,.25);
+  box-shadow:0 8px 25px rgba(91,140,255,.25);
 }
 
 #fileInput{
@@ -417,110 +388,148 @@ video.media{
 .overlay{
   position:fixed;
   inset:0;
-  z-index:1000;
+  z-index:9999;
   display:none;
   align-items:center;
   justify-content:center;
-  padding:20px;
-  background:
-    rgba(5,9,18,.93);
-  backdrop-filter:blur(12px);
+  padding:22px;
+  background:rgba(5,9,18,.94);
+  backdrop-filter:blur(14px);
 }
 
 .overlay.show{
   display:flex;
 }
 
-.registerCard{
-  width:min(420px,100%);
+.card{
+  width:min(430px,100%);
   padding:24px;
-  border-radius:22px;
-  background:
-    linear-gradient(180deg,#172137,#11192a);
-  border:1px solid #2d3d59;
-  box-shadow:0 28px 90px rgba(0,0,0,.45);
+  border-radius:24px;
+  background:linear-gradient(180deg,#172137,#11192a);
+  border:1px solid #31425f;
+  box-shadow:0 28px 90px rgba(0,0,0,.5);
 }
 
-.registerLogo{
-  width:58px;
-  height:58px;
-  border-radius:18px;
+.cardLogo{
+  width:62px;
+  height:62px;
+  border-radius:20px;
   display:grid;
   place-items:center;
   margin-bottom:18px;
-  font-size:27px;
-  background:
-    linear-gradient(145deg,#6ea0ff,#466fd0);
-  box-shadow:0 15px 40px rgba(91,140,255,.25);
+  background:linear-gradient(145deg,#7aa5ff,#486edb);
+  font-size:30px;
+  box-shadow:0 15px 42px rgba(91,140,255,.25);
 }
 
-.registerCard h2{
+.card h2{
   margin:0;
-  font-size:23px;
+  font-size:24px;
 }
 
-.registerCard p{
-  margin:8px 0 18px;
-  color:#9ba9c1;
+.card p{
+  color:#9fb0c8;
   font-size:14px;
   line-height:1.5;
+  margin:9px 0 18px;
 }
 
 .registerInput{
   width:100%;
-  height:48px;
-  border:1px solid #344663;
-  border-radius:13px;
+  height:50px;
+  border-radius:14px;
+  border:1px solid #354864;
   background:#0d1626;
   color:white;
-  padding:0 14px;
   outline:none;
-}
-
-.registerInput:focus{
-  border-color:#6588c2;
+  padding:0 15px;
 }
 
 .registerButton{
   width:100%;
-  height:48px;
+  height:50px;
   margin-top:12px;
   border:0;
-  border-radius:13px;
-  background:
-    linear-gradient(145deg,#6797ff,#4879df);
+  border-radius:14px;
+  background:linear-gradient(145deg,#6b9cff,#4977dc);
   color:white;
-  font-weight:800;
+  font-weight:900;
   cursor:pointer;
 }
 
-/* RESPONSIVE */
+.small{
+  margin-top:12px;
+  color:#75849b;
+  font-size:12px;
+  text-align:center;
+}
+
+/* MOBILE */
 
 @media(max-width:600px){
-
-  .app{
-    border:0;
-  }
-
   .header{
-    padding:12px 14px;
+    padding-left:24px;
+    padding-right:24px;
   }
 
-  .brandIcon{
-    width:39px;
-    height:39px;
+  .logo{
+    width:70px;
+    height:70px;
+    border-radius:22px;
+    font-size:34px;
   }
 
-  .status{
-    padding:6px 8px;
+  .title{
+    font-size:28px;
   }
 
-  .bubble{
-    max-width:88%;
+  .subline{
+    font-size:20px;
+  }
+
+  .avatar{
+    width:68px;
+    height:68px;
+    font-size:25px;
+  }
+
+  .users{
+    padding-left:32px;
+    padding-right:32px;
+    font-size:21px;
   }
 
   .messages{
-    padding:14px 10px;
+    padding:12px 10px 16px;
+  }
+
+  .bubble{
+    max-width:90%;
+  }
+
+  .composer{
+    grid-template-columns:80px 1fr 86px;
+    gap:14px;
+    padding:20px 24px;
+    padding-bottom:calc(20px + env(safe-area-inset-bottom));
+  }
+
+  .iconBtn{
+    width:80px;
+    height:80px;
+    font-size:42px;
+  }
+
+  .input{
+    height:80px;
+    font-size:24px;
+    padding:0 26px;
+  }
+
+  .send{
+    width:86px;
+    height:80px;
+    font-size:33px;
   }
 }
 </style>
@@ -529,17 +538,11 @@ video.media{
 <body>
 
 <div id="registerOverlay" class="overlay">
-  <div class="registerCard">
-
-    <div class="registerLogo">
-      💬
-    </div>
-
+  <div class="card">
+    <div class="cardLogo">💬</div>
     <h2>Elige tu nombre</h2>
-
     <p>
-      Solo tendrás que hacerlo una vez en este dispositivo.
-      Después entrarás automáticamente al chat.
+      Se guardará solo en este dispositivo. La próxima vez entrarás automáticamente.
     </p>
 
     <input
@@ -547,154 +550,24 @@ video.media{
       class="registerInput"
       maxlength="30"
       autocomplete="off"
-      placeholder="Ej. Tyler"
+      placeholder="Tu nombre"
     >
 
-    <button
-      id="registerButton"
-      class="registerButton"
-    >
-      Continuar
+    <button id="registerButton" class="registerButton">
+      Entrar
     </button>
 
+    <div class="small">
+      No necesitas correo ni contraseña.
+    </div>
   </div>
 </div>
-
 
 <div class="app">
 
-<header class="header">
-
-  <div class="brand">
-
-    <div class="brandIcon">
-      💬
-    </div>
-
-    <div class="brandText">
-      <div class="title">Global Chat</div>
-      <div class="subtitle">
-        Conversación global
-      </div>
-    </div>
-
-  </div>
-
-  <div class="headerRight">
-
-    <div
-      id="status"
-      class="status online"
-    >
-      <span class="statusDot"></span>
-      <span id="statusText">En línea</span>
-    </div>
-
-    <div
-      id="avatar"
-      class="avatar"
-      title="Cambiar nombre"
-    >
-      U
-    </div>
-
-  </div>
-
-</header>
-
-
-<div class="userBar">
-
-  <div>
-    Conectado como
-    <strong id="currentUser">Usuario</strong>
-  </div>
-
-  <div
-    id="users"
-    class="userCount"
-  >
-    👥 1 usuario
-  </div>
-
-</div>
-
-
-<main
-  id="messages"
-  class="messages"
->
-</main>
-
-
-<div
-  id="preview"
-  class="preview"
->
-
-  <div class="previewCard">
-
-    <div
-      id="previewMedia"
-      class="previewMedia"
-    ></div>
-
-    <div class="previewInfo">
-
-      <div
-        id="previewName"
-        class="previewName"
-      ></div>
-
-      <div
-        id="previewSize"
-        class="previewSize"
-      ></div>
-
-    </div>
-
-    <button
-      id="cancelFile"
-      class="removeFile"
-    >
-      ✕
-    </button>
-
-  </div>
-
-</div>
-
-
-<div class="composer">
-
-  <button
-    id="attach"
-    class="iconButton"
-    title="Adjuntar archivo"
-  >
-    ＋
-  </button>
-
-  <input
-    id="message"
-    class="messageInput"
-    maxlength="2000"
-    placeholder="Escribe un mensaje..."
-  >
-
-  <button
-    id="send"
-    class="sendButton"
-    title="Enviar"
-  >
-    ➤
-  </button>
-
-</div>
-
-
-<input
-  id="fileInput"
+  <header class="header">
+    <div class="left">
+     "
   type="file"
   accept="image/*,video/*"
 >
